@@ -24,14 +24,14 @@ public class BloodTippedArrowEntity extends AbstractArrow {
         super(EntityType.SPECTRAL_ARROW, x, y, z, level, pickupItemStack, firedFromWeapon);
     }
 
-    //@Override
-    //public void tick() {
-    //    super.tick();
-    //    if (this.level().isClientSide && !this.inGround) {
-    //        this.level().addParticle(ParticleTypes.INSTANT_EFFECT, this.getX(), this.getY(), this.getZ(), 0.0, 0.0, 0.0);
-    //    }
-    //
-    //}
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide && !this.inGround) {
+            this.level().addParticle(ParticleTypes.INSTANT_EFFECT, this.getX(), this.getY(), this.getZ(), 0.0, 0.0, 0.0);
+        }
+
+    }
 
     @Override
     protected ItemStack getDefaultPickupItem() {

@@ -4,7 +4,9 @@ import com.mcgamer.mcjjkp.block.ModBlocks;
 import com.mcgamer.mcjjkp.entity.ModEntities;
 import com.mcgamer.mcjjkp.entity.client.BloodTippedArrowRenderer;
 import com.mcgamer.mcjjkp.item.ModItems;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTabs;
 import org.slf4j.Logger;
 
@@ -23,11 +25,16 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(JJKMod.MOD_ID)
 public class JJKMod {
     public static final String MOD_ID = "mcjjkp";
     private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Map<UUID, Long> cooldownMap = new HashMap<>();
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
@@ -65,7 +72,10 @@ public class JJKMod {
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-
+        for(Player player : event.getServer().getPlayerList().getPlayers()) {
+            cooldownMap.put(player.getUUID(), event.getServer().getNextTickTime());
+            System.out.println("Player added: " + player.getName());
+        }
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent

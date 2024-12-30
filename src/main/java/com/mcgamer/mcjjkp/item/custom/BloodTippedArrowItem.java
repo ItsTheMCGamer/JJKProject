@@ -4,6 +4,7 @@ import com.mcgamer.mcjjkp.entity.ModEntities;
 import com.mcgamer.mcjjkp.entity.custom.BloodTippedArrowEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -30,5 +31,10 @@ public class BloodTippedArrowItem extends ArrowItem {
                 pos.y(), pos.z(), stack.copyWithCount(1), (ItemStack)null);
         bloodTippedArrow.pickup = AbstractArrow.Pickup.ALLOWED;
         return bloodTippedArrow;
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        return super.getName(stack).copy().withColor(0xD40D04);
     }
 }
