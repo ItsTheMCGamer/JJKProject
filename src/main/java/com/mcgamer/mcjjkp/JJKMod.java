@@ -1,5 +1,11 @@
-package com.mcgamer.jjk;
+package com.mcgamer.mcjjkp;
 
+import com.mcgamer.mcjjkp.block.ModBlocks;
+import com.mcgamer.mcjjkp.entity.ModEntities;
+import com.mcgamer.mcjjkp.entity.client.BloodTippedArrowRenderer;
+import com.mcgamer.mcjjkp.item.ModItems;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.world.item.CreativeModeTabs;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -34,6 +40,10 @@ public class JJKMod {
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
 
+        ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
+        ModEntities.register(modEventBus);
+
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
@@ -46,6 +56,9 @@ public class JJKMod {
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if(event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
+            event.accept(ModItems.MODEL_ITEM);
+        }
 
     }
 
@@ -60,6 +73,8 @@ public class JJKMod {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+
+            EntityRenderers.register(ModEntities.BLOOD_TIPPED_ARROW_ENTITY.get(), BloodTippedArrowRenderer::new);
 
         }
     }

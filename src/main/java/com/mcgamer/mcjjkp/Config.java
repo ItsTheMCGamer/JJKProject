@@ -1,4 +1,4 @@
-package com.mcgamer.jjk;
+package com.mcgamer.mcjjkp;
 
 import java.util.List;
 import java.util.Set;
