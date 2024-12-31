@@ -22,17 +22,15 @@ public class ModEvents {
     public static void onUseArrow(PlayerInteractEvent.RightClickItem event) {
         Player entity = event.getEntity();
         if (event.getItemStack().is(Items.ARROW) && !event.getLevel().isClientSide) {
-            System.out.println("abc");
             UUID playerId = entity.getUUID();
             // Check cooldown
             if (cooldownMap.containsKey(playerId)) {
-                System.out.println("ab");
                 long lastUseTime = cooldownMap.get(playerId);
                 long currentTime = event.getLevel().getGameTime();
                 long cooldownDuration = 10;
                 System.out.println(currentTime-lastUseTime);
                 if (currentTime - lastUseTime < cooldownDuration) {
-                    System.out.println("a");
+
                 } else {
                     if (event.getItemStack().is(Items.ARROW) && !event.getLevel().isClientSide) {
                         entity.hurt(new DamageSource(entity.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)

@@ -23,9 +23,10 @@ public class BloodTippedArrowItem extends ArrowItem {
     @Override
     public AbstractArrow createArrow(Level level, ItemStack ammo, LivingEntity shooter,
                                      @Nullable ItemStack weapon) {
-        return new BloodTippedArrowEntity(ModEntities.BLOOD_TIPPED_ARROW_ENTITY.get(), level);
+        return new BloodTippedArrowEntity(level, shooter, ammo.copyWithCount(1), weapon);
     }
 
+    @Override
     public Projectile asProjectile(Level level, Position pos, ItemStack stack, Direction direction) {
         BloodTippedArrowEntity bloodTippedArrow = new BloodTippedArrowEntity(level, pos.x(),
                 pos.y(), pos.z(), stack.copyWithCount(1), (ItemStack)null);

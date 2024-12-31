@@ -19,7 +19,7 @@ public class ModEntityRenderers {
     }
 
     static {
-        register(ModEntities.BLOOD_TIPPED_ARROW_ENTITY.get(), BloodTippedArrowRenderer::new);
+        //register(ModEntities.BLOOD_TIPPED_ARROW_ENTITY.get(), BloodTippedArrowRenderer::new);
 
     }
 }

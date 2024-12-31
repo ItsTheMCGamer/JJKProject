@@ -1,5 +1,6 @@
 package com.mcgamer.mcjjkp.entity.custom;
 
+import com.mcgamer.mcjjkp.entity.ModEntities;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,11 +18,11 @@ public class BloodTippedArrowEntity extends AbstractArrow {
     }
 
     public BloodTippedArrowEntity(Level level, LivingEntity owner, ItemStack pickupItemStack, @javax.annotation.Nullable ItemStack firedFromWeapon) {
-        super(EntityType.SPECTRAL_ARROW, owner, level, pickupItemStack, firedFromWeapon);
+        super(ModEntities.BLOOD_TIPPED_ARROW_ENTITY.get(), owner, level, pickupItemStack, firedFromWeapon);
     }
 
     public BloodTippedArrowEntity(Level level, double x, double y, double z, ItemStack pickupItemStack, @Nullable ItemStack firedFromWeapon) {
-        super(EntityType.SPECTRAL_ARROW, x, y, z, level, pickupItemStack, firedFromWeapon);
+        super(ModEntities.BLOOD_TIPPED_ARROW_ENTITY.get(), x, y, z, level, pickupItemStack, firedFromWeapon);
     }
 
     @Override
