@@ -1,6 +1,5 @@
 package com.mcgamer.mcjjkp.item.custom;
 
-import com.mcgamer.mcjjkp.entity.ModEntities;
 import com.mcgamer.mcjjkp.entity.custom.BloodTippedArrowEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;

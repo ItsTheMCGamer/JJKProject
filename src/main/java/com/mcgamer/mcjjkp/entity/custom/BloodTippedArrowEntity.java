@@ -10,18 +10,15 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class BloodTippedArrowEntity extends AbstractArrow {
 
     int lifetime = 0;
-    double distance = 3;
 
     public BloodTippedArrowEntity(EntityType<? extends BloodTippedArrowEntity> entityType, Level level) {
         super(entityType, level);
@@ -94,56 +91,3 @@ public class BloodTippedArrowEntity extends AbstractArrow {
         setDeltaMovement(normalizedDifference.scale(thisSpeed));
     }
 }
-
-
-//List<Player> playersInRange = new ArrayList<>();
-//List<Monster> monstersInRange = new ArrayList<>();
-
-//if (this.getOwner() != null && lifetime >= 7) {
-//Vec3 arrowPos = this.position();
-//AABB homingRange = new AABB(arrowPos.x - 3, arrowPos.y - 3, arrowPos.z - 3, arrowPos.x + 3,
-//        arrowPos.y + 3, arrowPos.z + 3);
-//List<LivingEntity> entitiesInRange = this.level().getEntitiesOfClass(LivingEntity.class, homingRange);
-//                System.out.println(entitiesInRange);
-//Vec3 targetPos = this.getDeltaMovement();
-//
-//for (LivingEntity target : entitiesInRange) {
-//    if (target instanceof Player) {
-//        playersInRange.add((Player) target);
-//    } else if (target instanceof Monster) {
-//        monstersInRange.add((Monster) target);
-//        System.out.println("a monster has been added");
-//    }
-//}
-//if (!playersInRange.isEmpty()) {
-//    for (Player player : playersInRange) {
-//        double playerDistance = player.position().distanceTo(this.position());
-//
-//        if (playerDistance < distance) {
-//            distance = playerDistance;
-//            targetPos = player.position();
-//        }
-//    }
-//    this.setDeltaMovement(targetPos);
-//} else if (!monstersInRange.isEmpty()) {
-//    for (Monster monster : monstersInRange) {
-//        double monsterDistance = monster.position().distanceTo(this.position());
-//
-//        if (monsterDistance < distance) {
-//            distance = monsterDistance;
-//            targetPos = monster.position();
-//        }
-//    }
-//    this.setDeltaMovement(targetPos);
-//} else {
-//    for (LivingEntity livingEntity : entitiesInRange) {
-//        double entityDistance = livingEntity.position().distanceTo(this.position());
-//
-//        if (entityDistance < distance) {
-//            distance = entityDistance;
-//            targetPos = livingEntity.position();
-//        }
-//    }
-//    this.setDeltaMovement(targetPos);
-//}
-//}
