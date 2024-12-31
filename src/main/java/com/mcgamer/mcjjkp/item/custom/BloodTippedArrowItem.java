@@ -28,8 +28,8 @@ public class BloodTippedArrowItem extends ArrowItem {
 
     @Override
     public Projectile asProjectile(Level level, Position pos, ItemStack stack, Direction direction) {
-        BloodTippedArrowEntity bloodTippedArrow = new BloodTippedArrowEntity(level, pos.x(),
-                pos.y(), pos.z(), stack.copyWithCount(1), (ItemStack)null);
+        BloodTippedArrowEntity bloodTippedArrow = new BloodTippedArrowEntity(level, pos.x(), pos.y(),
+                pos.z(), stack.copyWithCount(1), (ItemStack)null);
         bloodTippedArrow.pickup = AbstractArrow.Pickup.ALLOWED;
         return bloodTippedArrow;
     }
