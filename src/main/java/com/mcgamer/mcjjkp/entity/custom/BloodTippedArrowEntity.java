@@ -47,7 +47,7 @@ public class BloodTippedArrowEntity extends AbstractArrow {
 
         if (!this.inGround && this.getOwner() != null) {
             this.level().addParticle(ParticleTypes.FALLING_LAVA, this.getX(), this.getY(), this.getZ(),
-                    random.nextInt(1), 0, random.nextInt(1));
+                    random.nextDouble(2), 0, random.nextDouble(2));
 
             List<Player> playersInRange = this.level().getEntitiesOfClass(Player.class,
                     this.getBoundingBox().inflate(4));

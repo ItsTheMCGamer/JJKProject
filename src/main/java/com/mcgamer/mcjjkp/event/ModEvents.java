@@ -1,5 +1,6 @@
 package com.mcgamer.mcjjkp.event;
 
+import com.mcgamer.mcjjkp.Config;
 import com.mcgamer.mcjjkp.JJKMod;
 import com.mcgamer.mcjjkp.item.ModItems;
 import net.minecraft.core.registries.Registries;
@@ -10,11 +11,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-import static com.mcgamer.mcjjkp.attachments.ModDataAttachments.BLOOD_DRAWN;
-import static com.mcgamer.mcjjkp.attachments.ModDataAttachments.COOLDOWN;
+import java.util.Random;
+
+import static com.mcgamer.mcjjkp.attachments.ModDataAttachments.*;
 import static com.mcgamer.mcjjkp.util.ModDamageTypes.HAEMORRHAGE;
 
 @EventBusSubscriber(modid = JJKMod.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
@@ -22,8 +25,8 @@ public class ModEvents {
     @SubscribeEvent
     public static void onUseArrow(PlayerInteractEvent.RightClickItem event) {
         Player player = event.getEntity();
-        if ((event.getEntity().getData(COOLDOWN) >= 10 || event.getEntity().getData(COOLDOWN) == -1)
-                && event.getItemStack().is(Items.ARROW) && !event.getLevel().isClientSide) {
+        if (event.getItemStack().is(Items.ARROW) && !event.getLevel().isClientSide && player.getData(INNATE_TECHNIQUE)
+                .equals("blood_manipulation") && player.getData(COOLDOWN) >= 10) {
             player.hurt(new DamageSource(player.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                     .getHolderOrThrow(HAEMORRHAGE)), 4f);
             event.getItemStack().consume(1, player);
@@ -45,6 +48,16 @@ public class ModEvents {
         if(player.getData(BLOOD_DRAWN) > 0 && player.getData(COOLDOWN) >= 600) {
             player.setData(BLOOD_DRAWN, player.getData(BLOOD_DRAWN) - 1);
             player.setData(COOLDOWN, 0);
+        }
+    }
+    @SubscribeEvent
+    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        if(Config.randomAssignTechniques && !event.getEntity().getData(PLAYER_HAS_JOINED)) {
+            event.getEntity().setData(PLAYER_HAS_JOINED, true);
+            Random random = new Random();
+            var randInt = random.nextInt(3);
+            assignTechnique(event.getEntity(), randInt);
+
         }
     }
 
@@ -69,5 +82,15 @@ public class ModEvents {
             case 10, 11:
                 player.kill();
         }
+    }
+
+    public static void assignTechnique(Player player, Integer technique) {
+        switch (technique) {
+            case 1:
+                player.setData(INNATE_TECHNIQUE, "blood_manipulation");
+            case 2:
+                System.out.println("hello");
+        }
+
     }
 }
