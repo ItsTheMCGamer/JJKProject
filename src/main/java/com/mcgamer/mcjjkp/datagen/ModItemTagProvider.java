@@ -2,6 +2,7 @@ package com.mcgamer.mcjjkp.datagen;
 
 import com.mcgamer.mcjjkp.JJKMod;
 import com.mcgamer.mcjjkp.item.ModItems;
+import com.mcgamer.mcjjkp.util.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;

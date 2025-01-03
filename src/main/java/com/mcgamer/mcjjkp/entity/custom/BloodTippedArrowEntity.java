@@ -45,13 +45,15 @@ public class BloodTippedArrowEntity extends AbstractArrow {
 
         lifetime++;
 
-        if (!this.inGround && this.getOwner() != null) {
+        if (!this.inGround && this.getOwner() != null && !level().isRaining()) {
             this.level().addParticle(ParticleTypes.FALLING_LAVA, this.getX(), this.getY(), this.getZ(),
                     random.nextDouble(2), 0, random.nextDouble(2));
 
             List<Player> playersInRange = this.level().getEntitiesOfClass(Player.class,
                     this.getBoundingBox().inflate(4));
             List<Monster> monstersInRange = this.level().getEntitiesOfClass(Monster.class,
+                    this.getBoundingBox().inflate(4));
+            List<LivingEntity> entitiesInRange = this.level().getEntitiesOfClass(LivingEntity.class,
                     this.getBoundingBox().inflate(4));
             LivingEntity target = null;
 
@@ -73,6 +75,15 @@ public class BloodTippedArrowEntity extends AbstractArrow {
                     }
                 }
                 redirectArrow(targetPos, target);
+            } else {
+                for(LivingEntity entity : entitiesInRange) {
+                    if(entity.distanceTo(this) < distance) {
+                        distance = entity.distanceTo(this);
+                        targetPos = entity.position();
+                        target = entity;
+                    }
+                }
+                redirectArrow(targetPos, target);
             }
         }
     }
@@ -83,11 +94,18 @@ public class BloodTippedArrowEntity extends AbstractArrow {
     }
 
     public final void redirectArrow(Vec3 targetPos, LivingEntity target) {
-        targetPos = new Vec3(targetPos.x, targetPos.y + target.getEyeHeight(), targetPos.z);
-        var thisPos = position();
-        var thisVelocity = getDeltaMovement();
-        var normalizedDifference = targetPos.subtract(thisPos).normalize();
-        var thisSpeed = thisVelocity.length();
-        setDeltaMovement(normalizedDifference.scale(thisSpeed));
+        if(target != null) {
+            targetPos = new Vec3(targetPos.x, targetPos.y + target.getEyeHeight(), targetPos.z);
+            var thisPos = position();
+            var thisVelocity = getDeltaMovement();
+            var normalizedDifference = targetPos.subtract(thisPos).normalize();
+            var thisSpeed = thisVelocity.length();
+            setDeltaMovement(normalizedDifference.scale(thisSpeed));
+        }
+    }
+
+    @Override
+    protected ItemStack getPickupItem() {
+        return new ItemStack(Items.ARROW);
     }
 }

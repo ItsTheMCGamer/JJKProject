@@ -2,15 +2,21 @@ package com.mcgamer.mcjjkp.event;
 
 import com.mcgamer.mcjjkp.Config;
 import com.mcgamer.mcjjkp.JJKMod;
+import com.mcgamer.mcjjkp.command.TechniquesCommand;
+import com.mcgamer.mcjjkp.components.ModDataComponents;
 import com.mcgamer.mcjjkp.item.ModItems;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -27,12 +33,18 @@ public class ModEvents {
         Player player = event.getEntity();
         if (event.getItemStack().is(Items.ARROW) && !event.getLevel().isClientSide && player.getData(INNATE_TECHNIQUE)
                 .equals("blood_manipulation") && player.getData(COOLDOWN) >= 10) {
+
             player.hurt(new DamageSource(player.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
-                    .getHolderOrThrow(HAEMORRHAGE)), 4f);
+                    .getHolderOrThrow(HAEMORRHAGE)), 2f);
             event.getItemStack().consume(1, player);
-            player.addItem(ModItems.BLOOD_TIPPED_ARROW_ITEM.toStack());
+
+            ItemStack bloodTippedArrow = ModItems.BLOOD_TIPPED_ARROW_ITEM.toStack();
+            bloodTippedArrow.set(ModDataComponents.ARROW_OWNER, player.getName().toString());
+            player.addItem(bloodTippedArrow);
+
             event.getEntity().setData(COOLDOWN, 0);
             player.setData(BLOOD_DRAWN, player.getData(BLOOD_DRAWN) + 1);
+
         }
     }
     @SubscribeEvent
@@ -45,7 +57,7 @@ public class ModEvents {
         if (player.hasData(BLOOD_DRAWN)) {
             applyEffects(player);
         }
-        if(player.getData(BLOOD_DRAWN) > 0 && player.getData(COOLDOWN) >= 600) {
+        if(player.getData(BLOOD_DRAWN) > 0 && player.getData(COOLDOWN) >= 2000) {
             player.setData(BLOOD_DRAWN, player.getData(BLOOD_DRAWN) - 1);
             player.setData(COOLDOWN, 0);
         }
@@ -56,39 +68,46 @@ public class ModEvents {
             event.getEntity().setData(PLAYER_HAS_JOINED, true);
             Random random = new Random();
             var randInt = random.nextInt(3);
-            assignTechnique(event.getEntity(), randInt);
+            event.getEntity().setData(INNATE_TECHNIQUE, "blood_manipulation");
+            // assignTechnique(event.getEntity(), randInt);
 
         }
     }
+    @SubscribeEvent
+    public static void registerCommands(RegisterCommandsEvent event) {
+        TechniquesCommand.register(event.getDispatcher());
+    }
+
+
+
 
     private static void applyEffects(Player player) {
         switch (player.getData(BLOOD_DRAWN)) {
             case 4, 5:
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 300), player);
+                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200), player);
                 break;
             case 6:
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 10), player);
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10), player);
+                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200), player);
+                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200), player);
                 break;
             case 7:
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 10, 2), player);
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10, 2), player);
+                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 2), player);
+                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 2), player);
                 break;
             case 8, 9:
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 10, 3), player);
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10, 3), player);
-                player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 10, 3), player);
+                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 3), player);
+                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 4), player);
+                player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 200, 4), player);
                 break;
             case 10, 11:
                 player.kill();
         }
     }
-
     public static void assignTechnique(Player player, Integer technique) {
         switch (technique) {
-            case 1:
+            case 1, 2:
                 player.setData(INNATE_TECHNIQUE, "blood_manipulation");
-            case 2:
+            case 0:
                 System.out.println("hello");
         }
 

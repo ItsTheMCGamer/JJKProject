@@ -2,10 +2,12 @@ package com.mcgamer.mcjjkp;
 
 import com.mcgamer.mcjjkp.attachments.ModDataAttachments;
 import com.mcgamer.mcjjkp.block.ModBlocks;
+import com.mcgamer.mcjjkp.components.ModDataComponents;
 import com.mcgamer.mcjjkp.entity.ModEntities;
 import com.mcgamer.mcjjkp.entity.client.BloodTippedArrowRenderer;
 import com.mcgamer.mcjjkp.item.ModItems;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTabs;
 import org.slf4j.Logger;
@@ -46,6 +48,7 @@ public class JJKMod {
         ModBlocks.register(modEventBus);
         ModEntities.register(modEventBus);
         ModDataAttachments.register(modEventBus);
+        ModDataComponents.register(modEventBus);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
@@ -82,5 +85,9 @@ public class JJKMod {
             EntityRenderers.register(ModEntities.BLOOD_TIPPED_ARROW_ENTITY.get(), BloodTippedArrowRenderer::new);
 
         }
+    }
+
+    public static ResourceLocation prefix(String str) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, str);
     }
 }
