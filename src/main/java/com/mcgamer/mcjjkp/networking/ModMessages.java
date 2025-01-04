@@ -3,6 +3,7 @@ package com.mcgamer.mcjjkp.networking;
 import com.mcgamer.mcjjkp.JJKMod;
 import com.mcgamer.mcjjkp.networking.packets.AbstractPacket;
 import com.mcgamer.mcjjkp.networking.packets.S2COpenTechniqueScreen;
+import com.mcgamer.mcjjkp.networking.packets.C2SUseTechnique;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -27,6 +28,7 @@ public class ModMessages {
     private static void register(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar reg = event.registrar("1");
         reg.playToClient(S2COpenTechniqueScreen.TYPE, S2COpenTechniqueScreen.CODEC, ModMessages::handle);
+        reg.playToServer(C2SUseTechnique.TYPE, C2SUseTechnique.CODEC, ModMessages::handle);
 
 
 

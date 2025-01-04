@@ -45,7 +45,7 @@ public class BloodTippedArrowEntity extends AbstractArrow {
 
         lifetime++;
 
-        if (!this.inGround && this.getOwner() != null && !level().isRaining()) {
+        if (!this.inGround && this.getOwner() != null && this.isInWaterOrRain()) {
             this.level().addParticle(ParticleTypes.FALLING_LAVA, this.getX(), this.getY(), this.getZ(),
                     random.nextDouble(2), 0, random.nextDouble(2));
 

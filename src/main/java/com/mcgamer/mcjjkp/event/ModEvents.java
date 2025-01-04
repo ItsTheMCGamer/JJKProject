@@ -3,10 +3,9 @@ package com.mcgamer.mcjjkp.event;
 import com.mcgamer.mcjjkp.Config;
 import com.mcgamer.mcjjkp.JJKMod;
 import com.mcgamer.mcjjkp.command.TechniquesCommand;
+import com.mcgamer.mcjjkp.command.TestCommand;
 import com.mcgamer.mcjjkp.components.ModDataComponents;
 import com.mcgamer.mcjjkp.item.ModItems;
-import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -32,7 +31,7 @@ public class ModEvents {
     public static void onUseArrow(PlayerInteractEvent.RightClickItem event) {
         Player player = event.getEntity();
         if (event.getItemStack().is(Items.ARROW) && !event.getLevel().isClientSide && player.getData(INNATE_TECHNIQUE)
-                .equals("blood_manipulation") && player.getData(COOLDOWN) >= 10) {
+                .equals("blood_manipulation") && player.getData(ARROW_PRICK_COOLDOWN) >= 10) {
 
             player.hurt(new DamageSource(player.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                     .getHolderOrThrow(HAEMORRHAGE)), 2f);
@@ -42,7 +41,7 @@ public class ModEvents {
             bloodTippedArrow.set(ModDataComponents.ARROW_OWNER, player.getName().toString());
             player.addItem(bloodTippedArrow);
 
-            event.getEntity().setData(COOLDOWN, 0);
+            event.getEntity().setData(ARROW_PRICK_COOLDOWN, 0);
             player.setData(BLOOD_DRAWN, player.getData(BLOOD_DRAWN) + 1);
 
         }
@@ -50,16 +49,20 @@ public class ModEvents {
     @SubscribeEvent
     public static void tick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
+        player.setData(COOLDOWN_SLOT_ONE, player.getData(COOLDOWN_SLOT_ONE) + 1);
+        player.setData(COOLDOWN_SLOT_TWO, player.getData(COOLDOWN_SLOT_TWO) + 1);
+        player.setData(COOLDOWN_SLOT_THREE, player.getData(COOLDOWN_SLOT_THREE) + 1);
+        player.setData(COOLDOWN_SLOT_FOUR, player.getData(COOLDOWN_SLOT_FOUR) + 1);
 
-        if(player.hasData(COOLDOWN)) {
-            player.setData(COOLDOWN, player.getData(COOLDOWN) + 1);
+        if(player.hasData(ARROW_PRICK_COOLDOWN)) {
+            player.setData(ARROW_PRICK_COOLDOWN, player.getData(ARROW_PRICK_COOLDOWN) + 1);
         }
         if (player.hasData(BLOOD_DRAWN)) {
             applyEffects(player);
         }
-        if(player.getData(BLOOD_DRAWN) > 0 && player.getData(COOLDOWN) >= 2000) {
+        if(player.getData(BLOOD_DRAWN) > 0 && player.getData(ARROW_PRICK_COOLDOWN) >= 2000) {
             player.setData(BLOOD_DRAWN, player.getData(BLOOD_DRAWN) - 1);
-            player.setData(COOLDOWN, 0);
+            player.setData(ARROW_PRICK_COOLDOWN, 0);
         }
     }
     @SubscribeEvent
@@ -76,6 +79,7 @@ public class ModEvents {
     @SubscribeEvent
     public static void registerCommands(RegisterCommandsEvent event) {
         TechniquesCommand.register(event.getDispatcher());
+        TestCommand.register(event.getDispatcher());
     }
 
 
