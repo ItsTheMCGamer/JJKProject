@@ -1,13 +1,11 @@
 package com.mcgamer.mcjjkp.entity.custom;
 
-import com.mcgamer.mcjjkp.entity.ModEntities;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -18,46 +16,49 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BloodTippedArrowEntity extends AbstractArrow {
+public class BloodTippedArrowEntity extends Arrow {
+
+    @Nullable
+    private LivingEntity lockedTarget = null;
 
     public BloodTippedArrowEntity(EntityType<? extends BloodTippedArrowEntity> entityType, Level level) {
         super(entityType, level);
-        this.entityData.isDirty();
     }
 
     public BloodTippedArrowEntity(Level level, LivingEntity owner, ItemStack pickupItemStack, @Nullable ItemStack firedFromWeapon) {
-        super(ModEntities.BLOOD_TIPPED_ARROW_ENTITY.get(), owner, level, pickupItemStack, firedFromWeapon);
-        this.entityData.isDirty();
+        super(level, owner, pickupItemStack, firedFromWeapon);
     }
 
     public BloodTippedArrowEntity(Level level, double x, double y, double z, ItemStack pickupItemStack, @Nullable ItemStack firedFromWeapon) {
-        super(ModEntities.BLOOD_TIPPED_ARROW_ENTITY.get(), x, y, z, level, pickupItemStack, firedFromWeapon);
-        this.entityData.isDirty();
+        super(level, x, y, z, pickupItemStack, firedFromWeapon);
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        Vec3 targetPos = this.getDeltaMovement();
-        float distance = 20;
+        float distance = 10;
 
         if (!this.inGround && this.getOwner() != null && !this.isInWaterOrRain()) {
             this.level().addParticle(ParticleTypes.CRIMSON_SPORE, this.getX(), this.getY(), this.getZ(),
                     0, 0, 0);
 
-            List<LivingEntity> entitiesInRange = this.level().getEntitiesOfClass(LivingEntity.class,
-                    this.getBoundingBox().inflate(20), e -> e.isAlive() && e != this.getOwner());
-            LivingEntity target = null;
+            // Acquire target once
+            if (lockedTarget == null || !lockedTarget.isAlive()) {
+                List<LivingEntity> entitiesInRange = this.level().getEntitiesOfClass(
+                        LivingEntity.class,
+                        this.getBoundingBox().inflate(distance),
+                        e -> e.isAlive() && e != this.getOwner()
+                );
 
-            for(LivingEntity entity : entitiesInRange) {
-                if(entity.distanceTo(this) < distance) {
-                    distance = entity.distanceTo(this);
-                    targetPos = entity.position();
-                    target = entity;
-                }
+                lockedTarget = entitiesInRange.stream()
+                        .min((a, b) -> Double.compare(a.distanceTo(this), b.distanceTo(this)))
+                        .orElse(null);
             }
-            redirectArrow(targetPos, target);
+
+            if (lockedTarget != null) {
+                redirectArrow(lockedTarget);
+            }
         } else if(this.isInWaterOrRain() && !this.level().isClientSide) {
             var normalArrow = new Arrow(
                     this.level(),
@@ -80,7 +81,6 @@ public class BloodTippedArrowEntity extends AbstractArrow {
             this.playSound(SoundEvents.FIRE_EXTINGUISH, 0.5F, 2.7F);
 
             this.discard();
-            return;
         }
     }
 
@@ -89,15 +89,14 @@ public class BloodTippedArrowEntity extends AbstractArrow {
         return new ItemStack(Items.ARROW);
     }
 
-    public final void redirectArrow(Vec3 targetPos, LivingEntity target) {
+    public final void redirectArrow(LivingEntity target) {
         if(target != null) {
-            targetPos = new Vec3(targetPos.x, targetPos.y + 0.5 * target.getEyeHeight(), targetPos.z);
+            Vec3 targetPos = new Vec3(target.getX(), target.getY() + 0.5 * target.getEyeHeight(), target.getZ());
             Vec3 thisPos = position();
             Vec3 thisVelocity = getDeltaMovement();
             Vec3 toTarget = targetPos.subtract(thisPos);
             double thisSpeed = thisVelocity.length();
 
-            //double homingStrength = Math.clamp(0.05 + (1 - (distance / 20)) * 0.4, 0.05, 0.25);;
             double homingStrength = 0.15;
             Vec3 newVelocity = thisVelocity.scale(1 - homingStrength)
                     .add(toTarget.normalize().scale(thisSpeed * homingStrength));
@@ -114,15 +113,16 @@ public class BloodTippedArrowEntity extends AbstractArrow {
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
 
-        if(this.getOwner() instanceof ServerPlayer player) {
-            System.out.println("Firing Take Aim trigger");
-            CriteriaTriggers.PLAYER_HURT_ENTITY.trigger(
-                    player,
-                    result.getEntity(),
-                    this.damageSources().arrow(this, this.getOwner()),
-                    (float)this.getBaseDamage(),
-                    (float)this.getBaseDamage(),
-                    false);
+        if (!this.level().isClientSide && this.getOwner() instanceof ServerPlayer serverPlayer) {
+            var mgr = serverPlayer.server.getAdvancements();
+            var adv = mgr.get(ResourceLocation.fromNamespaceAndPath("minecraft", "adventure/shoot_arrow"));
+            if (adv != null) {
+                var acc = serverPlayer.getAdvancements();
+                for (var crit : acc.getOrStartProgress(adv).getRemainingCriteria()) {
+                    acc.award(adv, crit);
+                }
+                System.out.println("Take Aim manually awarded.");
+            }
         }
     }
 }
