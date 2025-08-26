@@ -1,6 +1,7 @@
 package com.mcgamer.mcjjkp.networking.packets;
 
 import com.mcgamer.mcjjkp.JJKMod;
+import com.mcgamer.mcjjkp.networking.ModMessages;
 import com.mcgamer.mcjjkp.techniques.ExtensionTechnique;
 import com.mcgamer.mcjjkp.techniques.ExtensionTechniques;
 import com.mcgamer.mcjjkp.techniques.blood_manipulation.FlowingRedScale;
@@ -12,6 +13,9 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+
+import static com.mcgamer.mcjjkp.attachments.ModDataAttachments.CURSED_ENERGY_AVAILABLE;
+import static com.mcgamer.mcjjkp.attachments.ModDataAttachments.FLOWING_RED_SCALE_ACTIVE;
 
 public class C2SUseTechnique extends AbstractPacket {
     public static final Type<C2SUseTechnique> TYPE = new Type<>(JJKMod.prefix("use_technique"));
@@ -46,6 +50,10 @@ public class C2SUseTechnique extends AbstractPacket {
     @Override
     public void onServerReceived(MinecraftServer minecraftServer, ServerPlayer player) {
         this.getExtensionTechnique().execute();
+        ModMessages.sendToPlayerClient(new S2CSyncCursedEnergy(player.getData(CURSED_ENERGY_AVAILABLE)),
+                player);
+        ModMessages.sendToPlayerClient(new S2CFlowingRedScaleActive(player.getData(FLOWING_RED_SCALE_ACTIVE)),
+                player); 
     }
 
     @Override

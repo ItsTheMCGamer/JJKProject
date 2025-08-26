@@ -10,10 +10,6 @@ public class Config
 {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
-    private static final ModConfigSpec.BooleanValue SIX_EYES_ENABLED = BUILDER
-            .comment("Whether the Six Eyes technique is enabled. If true, randomnly assigns the Six Eyes to a player.")
-            .define("sixEyesEnabled", true);
-
     private static final ModConfigSpec.BooleanValue RANDOM_ASSIGN_TECHNIQUES = BUILDER
             .comment("If true, randomly assigns a curse technique to each player on server join.")
             .define("randomAssignTechniques", true);
@@ -29,7 +25,6 @@ public class Config
 
     static final ModConfigSpec SPEC = BUILDER.build();
 
-    public static boolean sixEyesEnabled;
     public static boolean randomAssignTechniques;
     public static int cursedEnergyLossRange;
 
@@ -37,7 +32,6 @@ public class Config
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event)
     {
-        sixEyesEnabled = SIX_EYES_ENABLED.get();
         randomAssignTechniques = RANDOM_ASSIGN_TECHNIQUES.get();
         cursedEnergyLossRange = CURSED_ENERGY_LOSS_RANGE.get();
 

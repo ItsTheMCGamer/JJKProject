@@ -12,13 +12,6 @@ public class InnateTechniques {
     private static final Map<Byte, UUID> networkIdToTechnique = new HashMap<>();
     private static byte nextNetworkId = 1;
 
-    /**
-     * Get the BendingStyle from the given id. Can return null under two conditions:
-     * <p>
-     * <ul>
-     * <li>No bending style is loaded with that Id - in the case of downgrading or removing addons
-     * <li>The provided id is null
-     */
     @Nullable
     public static InnateTechnique get(@Nullable UUID id) {
         return innateTechniquesById.get(id);

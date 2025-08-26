@@ -3,6 +3,7 @@ package com.mcgamer.mcjjkp;
 import com.mcgamer.mcjjkp.attachments.ModDataAttachments;
 import com.mcgamer.mcjjkp.block.ModBlocks;
 import com.mcgamer.mcjjkp.components.ModDataComponents;
+import com.mcgamer.mcjjkp.effect.ModEffects;
 import com.mcgamer.mcjjkp.entity.ModEntities;
 import com.mcgamer.mcjjkp.entity.client.BloodTippedArrowRenderer;
 import com.mcgamer.mcjjkp.item.ModItems;
@@ -66,6 +67,8 @@ public class JJKMod {
         ModDataAttachments.register(modEventBus);
         ModDataComponents.register(modEventBus);
 
+        ModEffects.register(modEventBus);
+
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
@@ -79,7 +82,7 @@ public class JJKMod {
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if(event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
-            event.accept(ModItems.MODEL_ITEM);
+
         }
 
     }

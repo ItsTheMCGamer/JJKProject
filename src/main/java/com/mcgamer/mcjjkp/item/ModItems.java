@@ -11,9 +11,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(JJKMod.MOD_ID);
 
-    public static final DeferredItem<Item> MODEL_ITEM = ITEMS.register("model_item",
-            () -> new Item(new Item.Properties()));
-
     public static final DeferredItem<Item> BLOOD_TIPPED_ARROW_ITEM = ITEMS.register("blood_tipped_arrow_item",
             () -> new BloodTippedArrowItem(new Item.Properties().stacksTo(48)));
 

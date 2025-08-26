@@ -12,10 +12,5 @@ public class TechniquesHudOverlay {
 
 
 
-    //private static HashMap<String, ResourceLocation> addToHashMap() {
-        //TECHNIQUE_TEXTURE_LOCATIONS.put("flowing_red_scale")
-    //}
-
-
 
 }

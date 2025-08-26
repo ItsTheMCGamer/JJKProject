@@ -13,7 +13,6 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        basicItem(ModItems.MODEL_ITEM.get());
         basicItem(ModItems.BLOOD_TIPPED_ARROW_ITEM.get());
     }
 }

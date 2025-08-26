@@ -2,20 +2,22 @@ package com.mcgamer.mcjjkp.techniques.blood_manipulation;
 
 import com.mcgamer.mcjjkp.JJKMod;
 import com.mcgamer.mcjjkp.attachments.ModDataAttachments;
+import com.mcgamer.mcjjkp.event.ModEvents;
+import com.mcgamer.mcjjkp.networking.ModMessages;
+import com.mcgamer.mcjjkp.networking.packets.S2CFlowingRedScaleActive;
+import com.mcgamer.mcjjkp.networking.packets.S2CSyncCursedEnergy;
 import com.mcgamer.mcjjkp.techniques.ExtensionTechnique;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import org.checkerframework.checker.units.qual.A;
 
-import java.util.UUID;
-
-import static com.mcgamer.mcjjkp.attachments.ModDataAttachments.COOLDOWN_SLOT_ONE;
+import static com.mcgamer.mcjjkp.attachments.ModDataAttachments.CURSED_ENERGY_AVAILABLE;
+import static com.mcgamer.mcjjkp.attachments.ModDataAttachments.FLOWING_RED_SCALE_ACTIVE;
 
 public class FlowingRedScale extends ExtensionTechnique {
-    public static int cooldownTimer = 15;
 
     public FlowingRedScale() {
         super(BloodManipulationTechnique.ID, "flowing_red_scale");
@@ -25,36 +27,22 @@ public class FlowingRedScale extends ExtensionTechnique {
     public void execute() {
         Player player = Minecraft.getInstance().player;
 
-        if(player.getData(ModDataAttachments.COOLDOWN_SLOT_ONE) >= getCooldown()) {
-            player.setData(COOLDOWN_SLOT_ONE, 0);
+        if(ModEvents.slotOneCooldown >= getCooldown() && hasRequiredCursedEnergy(player)) {
+            ModEvents.slotOneCooldown = 0;
+            player.setData(ModDataAttachments.CURSED_ENERGY_AVAILABLE,
+                    player.getData(ModDataAttachments.CURSED_ENERGY_AVAILABLE) - this.requiredCursedEnergy());
+            player.setData(ModDataAttachments.FLOWING_RED_SCALE_ACTIVE, true);
 
-            //AttributeModifier strength_modifier = new AttributeModifier(ResourceLocation
-            //        .fromNamespaceAndPath(JJKMod.MOD_ID, "attribute.damage_boost"),
-            //        1.2 + Math.floor((double) player.getData(ModDataAttachments.STRENGTH_XP) / 1000) * 0.05,
-            //        AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            //AttributeModifier speed_modifier = new AttributeModifier(ResourceLocation.fromNamespaceAndPath(JJKMod.MOD_ID,
-            //        "attribute.damage_boost"), 1.2 + Math.floor((double) player
-            //        .getData(ModDataAttachments.SPEED_XP) / 1000) * 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            //AttributeModifier health_modifier = new AttributeModifier(ResourceLocation.fromNamespaceAndPath(JJKMod
-            //        .MOD_ID, "attribute.damage_boost"), 1.2, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            AttributeModifier strength_modifier = new AttributeModifier(ResourceLocation
-                    .fromNamespaceAndPath(JJKMod.MOD_ID, "flowing_red_scale.strength_boost"),
-                    0.2F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            AttributeModifier speed_modifier = new AttributeModifier(ResourceLocation
-                    .fromNamespaceAndPath(JJKMod.MOD_ID, "flowing_red_scale.speed_boost"),
-                    0.2F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            AttributeModifier health_modifier = new AttributeModifier(ResourceLocation
-                    .fromNamespaceAndPath(JJKMod.MOD_ID, "flowing_red_scale.health_boost"),
-                    0.2F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-
-            player.getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(strength_modifier);
-            player.getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(speed_modifier);
-            player.getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(health_modifier);
 
         }
     }
 
     public static int getCooldown() {
         return 10;
+    }
+
+    @Override
+    public int requiredCursedEnergy() {
+        return 15;
     }
 }

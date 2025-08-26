@@ -1,9 +1,7 @@
 package com.mcgamer.mcjjkp.networking;
 
 import com.mcgamer.mcjjkp.JJKMod;
-import com.mcgamer.mcjjkp.networking.packets.AbstractPacket;
-import com.mcgamer.mcjjkp.networking.packets.S2COpenTechniqueScreen;
-import com.mcgamer.mcjjkp.networking.packets.C2SUseTechnique;
+import com.mcgamer.mcjjkp.networking.packets.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -29,6 +27,9 @@ public class ModMessages {
         final PayloadRegistrar reg = event.registrar("1");
         reg.playToClient(S2COpenTechniqueScreen.TYPE, S2COpenTechniqueScreen.CODEC, ModMessages::handle);
         reg.playToServer(C2SUseTechnique.TYPE, C2SUseTechnique.CODEC, ModMessages::handle);
+        reg.playToClient(S2CSyncCursedEnergy.TYPE, S2CSyncCursedEnergy.CODEC, ModMessages::handle);
+        reg.playToServer(C2SRemoveModifiers.TYPE, C2SRemoveModifiers.CODEC, ModMessages::handle);
+        reg.playToClient(S2CFlowingRedScaleActive.TYPE, S2CFlowingRedScaleActive.CODEC, ModMessages::handle);
 
 
 

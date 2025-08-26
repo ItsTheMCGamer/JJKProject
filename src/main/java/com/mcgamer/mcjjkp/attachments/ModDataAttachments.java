@@ -17,14 +17,30 @@ public class ModDataAttachments {
 
     public static final Supplier<AttachmentType<Integer>> BLOOD_DRAWN = ATTACHMENT_TYPES.register("blood_drawn",
             () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build());
-    public static final Supplier<AttachmentType<Integer>> CURSED_ENERGY = ATTACHMENT_TYPES.register("cursed_energy",
-            () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build());
+    public static final Supplier<AttachmentType<Integer>> CURSED_ENERGY_MAX = ATTACHMENT_TYPES
+            .register("cursed_energy_max", () -> AttachmentType.builder(() -> 50)
+                    .serialize(Codec.INT).build());
+    public static final Supplier<AttachmentType<Integer>> CURSED_ENERGY_AVAILABLE = ATTACHMENT_TYPES
+            .register("cursed_energy_available", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build());
     public static final Supplier<AttachmentType<String>> INNATE_TECHNIQUE = ATTACHMENT_TYPES
             .register("innate_technique", () -> AttachmentType.builder(() -> "").serialize(Codec.STRING)
                     .copyOnDeath().build());
     public static final Supplier<AttachmentType<Boolean>> PLAYER_HAS_JOINED = ATTACHMENT_TYPES
             .register("player_has_joined", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL)
                     .copyOnDeath().build());
+
+    /**
+     * Continuous techniques check
+     */
+    public static final Supplier<AttachmentType<Boolean>> FLOWING_RED_SCALE_ACTIVE = ATTACHMENT_TYPES
+            .register("flowing_red_scale_active", () -> AttachmentType.builder(() -> false)
+                    .serialize(Codec.BOOL).build());
+    public static final Supplier<AttachmentType<Boolean>> FLOWING_RED_SCALE_STACK_ACTIVE = ATTACHMENT_TYPES
+            .register("flowing_red_scale_stack_active", () -> AttachmentType.builder(() -> false)
+                    .serialize(Codec.BOOL).build());
+    public static final Supplier<AttachmentType<Boolean>> LIMITLESS_ACTIVE = ATTACHMENT_TYPES
+            .register("limitless_active", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
+
     /**
      * Attachments for ranking/level-up/skill tree system
      */
@@ -42,30 +58,9 @@ public class ModDataAttachments {
     public static final Supplier<AttachmentType<Integer>> WEAPON_PROFICIENCY_XP = ATTACHMENT_TYPES
             .register("weapon_proficiency_xp", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT)
                     .copyOnDeath().build());
-
-    /**
-     * Cooldowns
-     */
-    public static final Supplier<AttachmentType<Integer>> ARROW_PRICK_COOLDOWN =
-            ATTACHMENT_TYPES.register("arrow_prick_cooldown", () -> AttachmentType.builder(() -> 20)
-                    .serialize(Codec.INT).build());
-    public static final Supplier<AttachmentType<Integer>> COOLDOWN_SLOT_ONE =
-            ATTACHMENT_TYPES.register("cooldown_slot_one", () -> AttachmentType.builder(() -> {
-                if(1 != 0) {
-                    return  2 * FlowingRedScale.getCooldown();
-                } else {
-                    return 0;
-                }})
-                    .serialize(Codec.INT).build());
-    public static final Supplier<AttachmentType<Integer>> COOLDOWN_SLOT_TWO =
-            ATTACHMENT_TYPES.register("cooldown_slot_two", () -> AttachmentType.builder(() -> 1000000)
-                    .serialize(Codec.INT).build());
-    public static final Supplier<AttachmentType<Integer>> COOLDOWN_SLOT_THREE =
-            ATTACHMENT_TYPES.register("cooldown_slot_three", () -> AttachmentType.builder(() -> 1000000)
-                    .serialize(Codec.INT).build());
-    public static final Supplier<AttachmentType<Integer>> COOLDOWN_SLOT_FOUR =
-            ATTACHMENT_TYPES.register("cooldown_slot_four", () -> AttachmentType.builder(() -> 1000000)
-                    .serialize(Codec.INT).build());
+    public static final Supplier<AttachmentType<Integer>> CURSED_ENERGY_XP = ATTACHMENT_TYPES
+            .register("cursed_energy_xp", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT)
+                    .copyOnDeath().build());
 
     public static void register(IEventBus eventBus) {
         ATTACHMENT_TYPES.register(eventBus);

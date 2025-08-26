@@ -1,5 +1,6 @@
 package com.mcgamer.mcjjkp.techniques;
 
+import com.mcgamer.mcjjkp.attachments.ModDataAttachments;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
@@ -27,7 +28,16 @@ public abstract class ExtensionTechnique {
 
     public abstract void execute();
 
+    /** this method's kinda useless */
     public static int getCooldown() {
         return 15;
+    }
+
+    public int requiredCursedEnergy() {
+        return 10;
+    }
+
+    public final boolean hasRequiredCursedEnergy(Player player) {
+        return player.getData(ModDataAttachments.CURSED_ENERGY_AVAILABLE) >= this.requiredCursedEnergy();
     }
 }
