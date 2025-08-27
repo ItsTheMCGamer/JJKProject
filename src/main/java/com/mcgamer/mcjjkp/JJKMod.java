@@ -7,10 +7,7 @@ import com.mcgamer.mcjjkp.effect.ModEffects;
 import com.mcgamer.mcjjkp.entity.ModEntities;
 import com.mcgamer.mcjjkp.entity.client.BloodTippedArrowRenderer;
 import com.mcgamer.mcjjkp.item.ModItems;
-import com.mcgamer.mcjjkp.techniques.ExtensionTechniques;
-import com.mcgamer.mcjjkp.techniques.InnateTechniques;
-import com.mcgamer.mcjjkp.techniques.blood_manipulation.BloodManipulationTechnique;
-import com.mcgamer.mcjjkp.techniques.blood_manipulation.FlowingRedScaleTechnique;
+import com.mcgamer.mcjjkp.techniques.ExtensionTechniqueRegistry;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -38,32 +35,19 @@ public class JJKMod {
     public static final String MOD_ID = "mcjjkp";
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    private static void registerExtensionTechniques() {
-        ExtensionTechniques.register(new FlowingRedScaleTechnique());
-
-    }
-
-    private static void registerInnateTechniques() {
-        InnateTechniques.register(new BloodManipulationTechnique());
-
-    }
-
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public JJKMod(IEventBus modEventBus, ModContainer modContainer) {
-        // Register the commonSetup method for modloading
+
         modEventBus.addListener(this::commonSetup);
 
-        // Register ourselves for server and other game events we are interested in.
-        // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
-        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
+
+        ExtensionTechniqueRegistry.init();
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModEntities.register(modEventBus);
-        registerExtensionTechniques();
-        registerInnateTechniques();
         ModDataAttachments.register(modEventBus);
         ModDataComponents.register(modEventBus);
 

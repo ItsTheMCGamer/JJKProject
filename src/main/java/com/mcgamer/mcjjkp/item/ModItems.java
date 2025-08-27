@@ -3,7 +3,6 @@ package com.mcgamer.mcjjkp.item;
 import com.mcgamer.mcjjkp.JJKMod;
 import com.mcgamer.mcjjkp.item.custom.BloodTippedArrowItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Rarity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;

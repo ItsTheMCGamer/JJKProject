@@ -1,8 +1,5 @@
 package com.mcgamer.mcjjkp.command;
 
-import com.mcgamer.mcjjkp.networking.ModMessages;
-import com.mcgamer.mcjjkp.networking.packets.C2SUseTechnique;
-import com.mcgamer.mcjjkp.techniques.ExtensionTechniques;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
@@ -24,8 +21,6 @@ public class TestCommand {
     }
 
     public static int test(CommandSourceStack commandContext, String technique) {
-        ModMessages.sendToServer(new C2SUseTechnique(ExtensionTechniques.get(technique)));
-        System.out.println("Flowing Red Scale Active");
 
         return 0;
     }

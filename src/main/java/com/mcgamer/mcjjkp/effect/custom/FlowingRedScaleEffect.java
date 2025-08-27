@@ -19,22 +19,6 @@ public class FlowingRedScaleEffect extends MobEffect {
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity entity, int amplifier) {
-        if (!entity.level().isClientSide && entity.tickCount % FlowingRedScaleTechnique.getCooldown() == 0) {
-            if (entity instanceof Player player && player.getData(ModDataAttachments.CURSED_ENERGY_AVAILABLE) >= 3) {
-                player.setData(ModDataAttachments.CURSED_ENERGY_AVAILABLE,
-                        player.getData(ModDataAttachments.CURSED_ENERGY_AVAILABLE) - 3);
-                ModMessages.sendToPlayerClient(new S2CSyncCursedEnergy(player.getData(CURSED_ENERGY_AVAILABLE)),
-                        (ServerPlayer)player);
-            } else {
-                entity.removeEffect(ModEffects.FLOWING_RED_SCALE_EFFECT);
-            }
-        }
-
-        return super.applyEffectTick(entity, amplifier);
-    }
-
-    @Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
         return true;
     }

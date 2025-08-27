@@ -1,7 +1,11 @@
 package com.mcgamer.mcjjkp.attachments;
 
 import com.mcgamer.mcjjkp.JJKMod;
+import com.mcgamer.mcjjkp.networking.ModMessages;
+import com.mcgamer.mcjjkp.networking.packets.S2CSyncCursedEnergy;
 import com.mojang.serialization.Codec;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -30,22 +34,10 @@ public class ModDataAttachments {
                     .copyOnDeath().build());
 
     /**
-     * Cooldowns
+     * Cooldown
      */
     public static final AttachmentType<HashMap<String, Integer>> TECHNIQUES_COOLDOWN =
             AttachmentType.builder(() -> new HashMap<String, Integer>()).build();
-
-    /**
-     * Continuous techniques check
-     */
-    public static final Supplier<AttachmentType<Boolean>> FLOWING_RED_SCALE_ACTIVE = ATTACHMENT_TYPES
-            .register("flowing_red_scale_active", () -> AttachmentType.builder(() -> false)
-                    .serialize(Codec.BOOL).build());
-    public static final Supplier<AttachmentType<Boolean>> FLOWING_RED_SCALE_STACK_ACTIVE = ATTACHMENT_TYPES
-            .register("flowing_red_scale_stack_active", () -> AttachmentType.builder(() -> false)
-                    .serialize(Codec.BOOL).build());
-    public static final Supplier<AttachmentType<Boolean>> LIMITLESS_ACTIVE = ATTACHMENT_TYPES
-            .register("limitless_active", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
 
     /**
      * Attachments for ranking/level-up/skill tree system
@@ -70,5 +62,29 @@ public class ModDataAttachments {
 
     public static void register(IEventBus eventBus) {
         ATTACHMENT_TYPES.register(eventBus);
+    }
+
+    /**
+     * Helper functions
+     */
+    public static int getCursedEnergy(Player player) {
+        Integer data = player.getData(CURSED_ENERGY_AVAILABLE);
+        return data != null ? data : 0;
+    }
+
+    public static boolean hasCursedEnergy(Player player) {
+        return player.hasData(CURSED_ENERGY_AVAILABLE);
+    }
+
+    public static void setCursedEnergy(Player player, Integer energy) {
+        player.setData(CURSED_ENERGY_AVAILABLE, energy);
+        ModMessages.sendToPlayerClient(new S2CSyncCursedEnergy(player.getData(CURSED_ENERGY_AVAILABLE)),
+                (ServerPlayer)player);
+    }
+
+    public static void consumeCursedEnergy(Player player, Integer energyCost) {
+        player.setData(CURSED_ENERGY_AVAILABLE, player.getData(CURSED_ENERGY_AVAILABLE) - energyCost);
+        ModMessages.sendToPlayerClient(new S2CSyncCursedEnergy(player.getData(CURSED_ENERGY_AVAILABLE)),
+                (ServerPlayer)player);
     }
 }

@@ -2,23 +2,21 @@ package com.mcgamer.mcjjkp.event;
 
 import com.mcgamer.mcjjkp.Config;
 import com.mcgamer.mcjjkp.JJKMod;
-import com.mcgamer.mcjjkp.attachments.ModDataAttachments;
 import com.mcgamer.mcjjkp.command.TechniquesCommand;
 import com.mcgamer.mcjjkp.command.TestCommand;
 import com.mcgamer.mcjjkp.components.ModDataComponents;
 import com.mcgamer.mcjjkp.effect.ModEffects;
 import com.mcgamer.mcjjkp.item.ModItems;
 import com.mcgamer.mcjjkp.networking.ModMessages;
-import com.mcgamer.mcjjkp.networking.packets.C2SRemoveModifiers;
-import com.mcgamer.mcjjkp.networking.packets.S2CFlowingRedScaleActive;
 import com.mcgamer.mcjjkp.networking.packets.S2CSyncCursedEnergy;
+import com.mcgamer.mcjjkp.networking.packets.S2CToggleTechnique;
+import com.mcgamer.mcjjkp.techniques.ExtensionTechnique;
+import com.mcgamer.mcjjkp.techniques.ExtensionTechniqueRegistry;
+import com.mcgamer.mcjjkp.techniques.ExtensionTechniques;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -31,7 +29,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Map;
-import java.util.Random;
 
 import static com.mcgamer.mcjjkp.attachments.ModDataAttachments.*;
 import static com.mcgamer.mcjjkp.util.ModDamageTypes.HAEMORRHAGE;
@@ -81,7 +78,13 @@ public class ModEvents {
         }
 
         if (player.hasData(BLOOD_DRAWN)) {
-            applyHaemorrhageEffect(player);
+            if(player.getData(BLOOD_DRAWN) <= 5 && player.getData(BLOOD_DRAWN) > 0) {
+                player.addEffect(new MobEffectInstance(ModEffects.HAEMORRHAGE_EFFECT, 2000, 0, false,
+                        true), player);
+            } else {
+                player.addEffect(new MobEffectInstance(ModEffects.HAEMORRHAGE_EFFECT, 2000, 1, false,
+                        true), player);
+            }
         }
         if(player.getData(BLOOD_DRAWN) > 0 && arrowPrickCooldown >= 2000) {
             player.setData(BLOOD_DRAWN, player.getData(BLOOD_DRAWN) - 1);
@@ -92,14 +95,10 @@ public class ModEvents {
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if(Config.randomAssignTechniques && !event.getEntity().getData(PLAYER_HAS_JOINED)) {
             event.getEntity().setData(PLAYER_HAS_JOINED, true);
-            Random random = new Random();
-            var randInt = random.nextInt(3);
             event.getEntity().setData(INNATE_TECHNIQUE, "blood_manipulation");
-            // assignTechnique(event.getEntity(), randInt);
 
         }
 
-        /** Syncs Cursed Energy */
         if(!event.getEntity().level().isClientSide) {
             ModMessages.sendToPlayerClient(new S2CSyncCursedEnergy(event.getEntity()
                     .getData(CURSED_ENERGY_AVAILABLE)), (ServerPlayer)event.getEntity());
@@ -111,47 +110,26 @@ public class ModEvents {
         TestCommand.register(event.getDispatcher());
     }
     @SubscribeEvent
-    public static void onLivingEntityDeath(LivingDeathEvent event) {
-        LivingEntity entity = event.getEntity();
-
-        if(entity instanceof Player) {
-            if (entity.getData(FLOWING_RED_SCALE_ACTIVE)) {
-                ModMessages.sendToServer(new C2SRemoveModifiers(ResourceLocation.fromNamespaceAndPath(JJKMod.MOD_ID,
-                        "flowing_red_scale.strength_boost"), Attributes.ATTACK_DAMAGE));
-                ModMessages.sendToServer(new C2SRemoveModifiers(ResourceLocation.fromNamespaceAndPath(JJKMod.MOD_ID,
-                        "flowing_red_scale.speed_boost"), Attributes.MOVEMENT_SPEED));
-                ModMessages.sendToServer(new C2SRemoveModifiers(ResourceLocation.fromNamespaceAndPath(JJKMod.MOD_ID,
-                        "flowing_red_scale.health_boost"), Attributes.MAX_HEALTH));
-            }
-            if (entity.getData(FLOWING_RED_SCALE_STACK_ACTIVE)) {
-                ModMessages.sendToServer(new C2SRemoveModifiers(ResourceLocation.fromNamespaceAndPath(JJKMod.MOD_ID,
-                        "flowing_red_scale_stack.strength_boost"), Attributes.ATTACK_DAMAGE));
-                ModMessages.sendToServer(new C2SRemoveModifiers(ResourceLocation.fromNamespaceAndPath(JJKMod.MOD_ID,
-                        "flowing_red_scale_stack.speed_boost"), Attributes.MOVEMENT_SPEED));
-                ModMessages.sendToServer(new C2SRemoveModifiers(ResourceLocation.fromNamespaceAndPath(JJKMod.MOD_ID,
-                        "flowing_red_scale_stack.health_boost"), Attributes.MAX_HEALTH));
+    public static void onPlayerDeath(LivingDeathEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            String techniqueName = player.getData(INNATE_TECHNIQUE);
+            ExtensionTechnique technique = ExtensionTechniqueRegistry.getTechnique(ExtensionTechniques.valueOf(techniqueName));
+            if (technique != null && technique.isToggleable() && technique.isActive()) {
+                technique.setActive(false);
             }
         }
     }
-
-
-    private static void applyHaemorrhageEffect(Player player) {
-        if(player.getData(BLOOD_DRAWN) <= 5 && player.getData(BLOOD_DRAWN) > 0) {
-            System.out.println("no");
-            player.addEffect(new MobEffectInstance(ModEffects.HAEMORRHAGE_EFFECT, 2000, 0, false,
-                    true), player);
-        } else {
-            player.addEffect(new MobEffectInstance(ModEffects.HAEMORRHAGE_EFFECT, 2000, 1, false,
-                    true), player);
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            String techniqueName = player.getData(INNATE_TECHNIQUE);
+            ExtensionTechniques type = ExtensionTechniques.valueOf(techniqueName);
+            if (type != null) {
+                ExtensionTechnique technique = ExtensionTechniqueRegistry.getTechnique(type);
+                if (technique != null) {
+                    ModMessages.sendToServer(new S2CToggleTechnique(technique.isActive(), type.name()));
+                }
+            }
         }
-    }
-    public static void assignTechnique(Player player, Integer technique) {
-        switch (technique) {
-            case 1, 2:
-                player.setData(INNATE_TECHNIQUE, "blood_manipulation");
-            case 0:
-                System.out.println("hello");
-        }
-
     }
 }

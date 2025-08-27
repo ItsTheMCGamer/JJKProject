@@ -5,6 +5,7 @@ import com.mcgamer.mcjjkp.networking.packets.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,7 +18,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+
+import static org.apache.http.params.CoreProtocolPNames.PROTOCOL_VERSION;
+import static oshi.jna.platform.mac.SystemB.INSTANCE;
 
 @EventBusSubscriber(modid = JJKMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class ModMessages {
@@ -26,13 +31,9 @@ public class ModMessages {
     private static void register(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar reg = event.registrar("1");
         reg.playToClient(S2COpenTechniqueScreen.TYPE, S2COpenTechniqueScreen.CODEC, ModMessages::handle);
-        reg.playToServer(C2SUseTechnique.TYPE, C2SUseTechnique.CODEC, ModMessages::handle);
+        reg.playToClient(S2CToggleTechnique.TYPE, S2CToggleTechnique.CODEC, ModMessages::handle);
+        reg.playToClient(S2CTechniqueCooldown.TYPE, S2CTechniqueCooldown.CODEC, ModMessages::handle);
         reg.playToClient(S2CSyncCursedEnergy.TYPE, S2CSyncCursedEnergy.CODEC, ModMessages::handle);
-        reg.playToServer(C2SRemoveModifiers.TYPE, C2SRemoveModifiers.CODEC, ModMessages::handle);
-        reg.playToClient(S2CFlowingRedScaleActive.TYPE, S2CFlowingRedScaleActive.CODEC, ModMessages::handle);
-
-
-
     }
 
     private static <T extends AbstractPacket> void handle(T message, IPayloadContext ctx) {
