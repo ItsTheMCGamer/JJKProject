@@ -2,6 +2,7 @@ package com.mcgamer.mcjjkp.techniques;
 
 import com.mcgamer.mcjjkp.techniques.blood_manipulation.FlowingRedScaleTechnique;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -24,5 +25,9 @@ public class ExtensionTechniqueRegistry {
 
     public static Optional<ExtensionTechnique> getTechniqueByName(String name) {
         return Optional.ofNullable(TECHNIQUES.get(name));
+    }
+
+    public static Collection<ExtensionTechnique> getAllTechniques() {
+        return TECHNIQUES.values();
     }
 }

@@ -33,11 +33,8 @@ public class ModDataAttachments {
             .register("player_has_joined", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL)
                     .copyOnDeath().build());
 
-    /**
-     * Cooldown
-     */
-    public static final AttachmentType<HashMap<String, Integer>> TECHNIQUES_COOLDOWN =
-            AttachmentType.builder(() -> new HashMap<String, Integer>()).build();
+    public static final Supplier<AttachmentType<Integer>> LAST_ARROW_PRICK = ATTACHMENT_TYPES
+            .register("last_arrow_prick", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build());
 
     /**
      * Attachments for ranking/level-up/skill tree system

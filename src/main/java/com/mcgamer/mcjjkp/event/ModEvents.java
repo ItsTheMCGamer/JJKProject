@@ -12,7 +12,6 @@ import com.mcgamer.mcjjkp.networking.packets.S2CSyncCursedEnergy;
 import com.mcgamer.mcjjkp.networking.packets.S2CToggleTechnique;
 import com.mcgamer.mcjjkp.techniques.ExtensionTechnique;
 import com.mcgamer.mcjjkp.techniques.ExtensionTechniqueRegistry;
-import com.mcgamer.mcjjkp.techniques.ExtensionTechniques;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -28,14 +27,11 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-import java.util.Map;
-
 import static com.mcgamer.mcjjkp.attachments.ModDataAttachments.*;
 import static com.mcgamer.mcjjkp.util.ModDamageTypes.HAEMORRHAGE;
 
 @EventBusSubscriber(modid = JJKMod.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class ModEvents {
-    private static int arrowPrickCooldown = 0;
 
     @SubscribeEvent
     public static void onUseArrow(PlayerInteractEvent.RightClickItem event) {
@@ -58,9 +54,8 @@ public class ModEvents {
     @SubscribeEvent
     public static void tick(PlayerTickEvent.Pre event) {
         Player player = event.getEntity();
-        Map<String, Integer> cooldowns = player.getData(TECHNIQUES_COOLDOWN);
 
-        arrowPrickCooldown++;
+        player.setData(LAST_ARROW_PRICK, player.getData(LAST_ARROW_PRICK) + 1);
 
         if(player.getData(CURSED_ENERGY_AVAILABLE) < player.getData(CURSED_ENERGY_MAX) && player.tickCount % 60 == 0) {
             player.setData(CURSED_ENERGY_AVAILABLE, player.getData(CURSED_ENERGY_AVAILABLE) + 1);
@@ -86,22 +81,9 @@ public class ModEvents {
                         true), player);
             }
         }
-        if(player.getData(BLOOD_DRAWN) > 0 && arrowPrickCooldown >= 2000) {
+        if(player.getData(BLOOD_DRAWN) > 0 && player.getData(LAST_ARROW_PRICK) >= 2000) {
             player.setData(BLOOD_DRAWN, player.getData(BLOOD_DRAWN) - 1);
-            arrowPrickCooldown = 0;
-        }
-    }
-    @SubscribeEvent
-    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if(Config.randomAssignTechniques && !event.getEntity().getData(PLAYER_HAS_JOINED)) {
-            event.getEntity().setData(PLAYER_HAS_JOINED, true);
-            event.getEntity().setData(INNATE_TECHNIQUE, "blood_manipulation");
-
-        }
-
-        if(!event.getEntity().level().isClientSide) {
-            ModMessages.sendToPlayerClient(new S2CSyncCursedEnergy(event.getEntity()
-                    .getData(CURSED_ENERGY_AVAILABLE)), (ServerPlayer)event.getEntity());
+            player.setData(LAST_ARROW_PRICK, 0);
         }
     }
     @SubscribeEvent
@@ -111,25 +93,37 @@ public class ModEvents {
     }
     @SubscribeEvent
     public static void onPlayerDeath(LivingDeathEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            String techniqueName = player.getData(INNATE_TECHNIQUE);
-            ExtensionTechnique technique = ExtensionTechniqueRegistry.getTechnique(ExtensionTechniques.valueOf(techniqueName));
-            if (technique != null && technique.isToggleable() && technique.isActive()) {
-                technique.setActive(false);
+        if (event.getEntity() instanceof ServerPlayer player) {
+            String innateTechniqueName = player.getData(INNATE_TECHNIQUE) != null ? player.getData(INNATE_TECHNIQUE) : null;
+            for (ExtensionTechnique technique : ExtensionTechniqueRegistry.getAllTechniques()) {
+                if (technique.getParentTechnique().equals(innateTechniqueName) && technique.isToggleable()) {
+                    technique.setActive(false);
+                    ModMessages.sendToPlayerClient(new S2CToggleTechnique(technique.isActive(), technique.getName()), player);
+                }
             }
         }
     }
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            String techniqueName = player.getData(INNATE_TECHNIQUE);
-            ExtensionTechniques type = ExtensionTechniques.valueOf(techniqueName);
-            if (type != null) {
-                ExtensionTechnique technique = ExtensionTechniqueRegistry.getTechnique(type);
-                if (technique != null) {
-                    ModMessages.sendToServer(new S2CToggleTechnique(technique.isActive(), type.name()));
+            String innateTechniqueName = player.getData(INNATE_TECHNIQUE) != null ? player.getData(INNATE_TECHNIQUE) : null;
+            for (ExtensionTechnique technique : ExtensionTechniqueRegistry.getAllTechniques()) {
+                if (technique.getParentTechnique().equals(innateTechniqueName) && technique.isToggleable()) {
+                    technique.setActive(false);
+                    ModMessages.sendToPlayerClient(new S2CToggleTechnique(technique.isActive(), technique.getName()), player);
                 }
             }
+        }
+
+        if(Config.randomAssignTechniques && !event.getEntity().getData(PLAYER_HAS_JOINED)) {
+            event.getEntity().setData(PLAYER_HAS_JOINED, true);
+            event.getEntity().setData(INNATE_TECHNIQUE, "blood_manipulation");
+
+        }
+
+        if(!event.getEntity().level().isClientSide) {
+            ModMessages.sendToPlayerClient(new S2CSyncCursedEnergy(event.getEntity()
+                    .getData(CURSED_ENERGY_AVAILABLE)), (ServerPlayer)event.getEntity());
         }
     }
 }
