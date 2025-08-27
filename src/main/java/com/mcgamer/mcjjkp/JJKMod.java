@@ -10,7 +10,7 @@ import com.mcgamer.mcjjkp.item.ModItems;
 import com.mcgamer.mcjjkp.techniques.ExtensionTechniques;
 import com.mcgamer.mcjjkp.techniques.InnateTechniques;
 import com.mcgamer.mcjjkp.techniques.blood_manipulation.BloodManipulationTechnique;
-import com.mcgamer.mcjjkp.techniques.blood_manipulation.FlowingRedScale;
+import com.mcgamer.mcjjkp.techniques.blood_manipulation.FlowingRedScaleTechnique;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -39,7 +39,7 @@ public class JJKMod {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     private static void registerExtensionTechniques() {
-        ExtensionTechniques.register(new FlowingRedScale());
+        ExtensionTechniques.register(new FlowingRedScaleTechnique());
 
     }
 

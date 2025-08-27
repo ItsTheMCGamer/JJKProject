@@ -4,15 +4,12 @@ import com.mcgamer.mcjjkp.JJKMod;
 import com.mcgamer.mcjjkp.networking.ModMessages;
 import com.mcgamer.mcjjkp.techniques.ExtensionTechnique;
 import com.mcgamer.mcjjkp.techniques.ExtensionTechniques;
-import com.mcgamer.mcjjkp.techniques.blood_manipulation.FlowingRedScale;
 import com.mcgamer.mcjjkp.util.GoreCoreByteBufUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 
 import static com.mcgamer.mcjjkp.attachments.ModDataAttachments.CURSED_ENERGY_AVAILABLE;
 import static com.mcgamer.mcjjkp.attachments.ModDataAttachments.FLOWING_RED_SCALE_ACTIVE;

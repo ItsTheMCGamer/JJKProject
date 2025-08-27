@@ -6,6 +6,7 @@ import com.mcgamer.mcjjkp.attachments.ModDataAttachments;
 import com.mcgamer.mcjjkp.command.TechniquesCommand;
 import com.mcgamer.mcjjkp.command.TestCommand;
 import com.mcgamer.mcjjkp.components.ModDataComponents;
+import com.mcgamer.mcjjkp.effect.ModEffects;
 import com.mcgamer.mcjjkp.item.ModItems;
 import com.mcgamer.mcjjkp.networking.ModMessages;
 import com.mcgamer.mcjjkp.networking.packets.C2SRemoveModifiers;
@@ -16,7 +17,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -30,6 +30,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
+import java.util.Map;
 import java.util.Random;
 
 import static com.mcgamer.mcjjkp.attachments.ModDataAttachments.*;
@@ -37,18 +38,14 @@ import static com.mcgamer.mcjjkp.util.ModDamageTypes.HAEMORRHAGE;
 
 @EventBusSubscriber(modid = JJKMod.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class ModEvents {
-    private static int flowingRedScaleCooldown = 0;
     private static int arrowPrickCooldown = 0;
-    public static int slotOneCooldown = 0;
-    public static int slotTwoCooldown = 0;
-    public static int slotThreeCooldown = 0;
-    public static int slotFourCooldown = 0;
 
     @SubscribeEvent
     public static void onUseArrow(PlayerInteractEvent.RightClickItem event) {
         Player player = event.getEntity();
         if (event.getItemStack().is(Items.ARROW) && !event.getLevel().isClientSide && player.getData(INNATE_TECHNIQUE)
-                .equals("blood_manipulation") && arrowPrickCooldown >= 10) {
+                .equals("blood_manipulation") && !player.getCooldowns().isOnCooldown(event.getItemStack().getItem())) {
+            player.getCooldowns().addCooldown(event.getItemStack().getItem(), 10);
 
             player.hurt(new DamageSource(player.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                     .getHolderOrThrow(HAEMORRHAGE)), 2f);
@@ -58,26 +55,15 @@ public class ModEvents {
             bloodTippedArrow.set(ModDataComponents.ARROW_OWNER, player.getName().toString());
             player.addItem(bloodTippedArrow);
 
-            arrowPrickCooldown = 0;
             player.setData(BLOOD_DRAWN, player.getData(BLOOD_DRAWN) + 1);
-
         }
     }
     @SubscribeEvent
     public static void tick(PlayerTickEvent.Pre event) {
         Player player = event.getEntity();
+        Map<String, Integer> cooldowns = player.getData(TECHNIQUES_COOLDOWN);
 
-        if(player.getData(CURSED_ENERGY_MAX) != 100) {
-            player.setData(CURSED_ENERGY_MAX, 100);
-        }
-
-        flowingRedScaleCooldown++;
         arrowPrickCooldown++;
-        slotOneCooldown++;
-        slotTwoCooldown++;
-        slotThreeCooldown++;
-        slotFourCooldown++;
-
 
         if(player.getData(CURSED_ENERGY_AVAILABLE) < player.getData(CURSED_ENERGY_MAX) && player.tickCount % 60 == 0) {
             player.setData(CURSED_ENERGY_AVAILABLE, player.getData(CURSED_ENERGY_AVAILABLE) + 1);
@@ -94,25 +80,8 @@ public class ModEvents {
             }
         }
 
-        if(player.getData(FLOWING_RED_SCALE_ACTIVE) && flowingRedScaleCooldown >= 20 &&
-                player.getData(CURSED_ENERGY_AVAILABLE) >= 3) {
-            System.out.println("ryn");
-            player.setData(CURSED_ENERGY_AVAILABLE, player.getData(CURSED_ENERGY_AVAILABLE) - 3);
-            if(!player.level().isClientSide) {
-                ModMessages.sendToPlayerClient(new S2CSyncCursedEnergy(player.getData(CURSED_ENERGY_AVAILABLE)),
-                        (ServerPlayer)player);
-            }
-            flowingRedScaleCooldown = 0;
-        } else {
-            player.setData(FLOWING_RED_SCALE_ACTIVE, false);
-            if(!player.level().isClientSide) {
-                ModMessages.sendToPlayerClient(new S2CFlowingRedScaleActive(player.getData(FLOWING_RED_SCALE_ACTIVE)),
-                        (ServerPlayer)player);
-            }
-         }
-
         if (player.hasData(BLOOD_DRAWN)) {
-            applyEffects(player);
+            applyHaemorrhageEffect(player);
         }
         if(player.getData(BLOOD_DRAWN) > 0 && arrowPrickCooldown >= 2000) {
             player.setData(BLOOD_DRAWN, player.getData(BLOOD_DRAWN) - 1);
@@ -166,26 +135,14 @@ public class ModEvents {
     }
 
 
-    private static void applyEffects(Player player) {
-        switch (player.getData(BLOOD_DRAWN)) {
-            case 4, 5:
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200), player);
-                break;
-            case 6:
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200), player);
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200), player);
-                break;
-            case 7:
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 2), player);
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 2), player);
-                break;
-            case 8, 9:
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 3), player);
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 4), player);
-                player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 200, 4), player);
-                break;
-            case 10, 11:
-                player.kill();
+    private static void applyHaemorrhageEffect(Player player) {
+        if(player.getData(BLOOD_DRAWN) <= 5 && player.getData(BLOOD_DRAWN) > 0) {
+            System.out.println("no");
+            player.addEffect(new MobEffectInstance(ModEffects.HAEMORRHAGE_EFFECT, 2000, 0, false,
+                    true), player);
+        } else {
+            player.addEffect(new MobEffectInstance(ModEffects.HAEMORRHAGE_EFFECT, 2000, 1, false,
+                    true), player);
         }
     }
     public static void assignTechnique(Player player, Integer technique) {

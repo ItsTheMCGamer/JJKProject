@@ -7,6 +7,7 @@
 
   "effect.mcjjkp.flowing_red_scale": "Flowing Red Scale",
   "effect.mcjjkp.flowing_red_scale_stack": "Flowing Red Scale: Stack",
+  "effect.mcjjkp.haemorrhage": "Haemorrhage",
 
   "death.attack.haemorrhage": "%1$s bled out",
   "death.attack.sonic_boom.item": "%1$s bled out while trying to escape %2$s wielding %3$s",

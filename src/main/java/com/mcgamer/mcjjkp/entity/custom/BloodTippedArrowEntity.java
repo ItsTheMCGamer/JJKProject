@@ -121,7 +121,6 @@ public class BloodTippedArrowEntity extends Arrow {
                 for (var crit : acc.getOrStartProgress(adv).getRemainingCriteria()) {
                     acc.award(adv, crit);
                 }
-                System.out.println("Take Aim manually awarded.");
             }
         }
     }

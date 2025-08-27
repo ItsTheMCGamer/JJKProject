@@ -28,13 +28,12 @@ public abstract class ExtensionTechnique {
 
     public abstract void execute();
 
-    /** this method's kinda useless */
     public static int getCooldown() {
-        return 15;
+        return 0;
     }
 
     public int requiredCursedEnergy() {
-        return 10;
+        return 0;
     }
 
     public final boolean hasRequiredCursedEnergy(Player player) {

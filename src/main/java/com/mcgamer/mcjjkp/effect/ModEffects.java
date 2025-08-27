@@ -1,6 +1,8 @@
 package com.mcgamer.mcjjkp.effect;
 
 import com.mcgamer.mcjjkp.JJKMod;
+import com.mcgamer.mcjjkp.effect.custom.FlowingRedScaleEffect;
+import com.mcgamer.mcjjkp.effect.custom.FlowingRedScaleStackEffect;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -34,6 +36,10 @@ public class ModEffects {
                     .addAttributeModifier(Attributes.ATTACK_DAMAGE,
                             ResourceLocation.fromNamespaceAndPath(JJKMod.MOD_ID, "flowing_red_scale_stack_strength"), 0.6f,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+
+    public static final Holder<MobEffect> HAEMORRHAGE_EFFECT =
+            MOB_EFFECTS.register("haemorrhage", () ->
+                    new FlowingRedScaleStackEffect(MobEffectCategory.HARMFUL, 0xff0000));
 
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);
