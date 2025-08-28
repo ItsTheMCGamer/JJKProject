@@ -1,5 +1,6 @@
 package com.mcgamer.mcjjkp.techniques;
 
+import com.mcgamer.mcjjkp.techniques.blood_manipulation.FlowingRedScaleStackTechnique;
 import com.mcgamer.mcjjkp.techniques.blood_manipulation.FlowingRedScaleTechnique;
 
 import java.util.Collection;
@@ -12,6 +13,7 @@ public class ExtensionTechniqueRegistry {
 
     public static void init() {
         register(ExtensionTechniques.FLOWING_RED_SCALE, new FlowingRedScaleTechnique());
+        register(ExtensionTechniques.FLOWING_RED_SCALE_STACK, new FlowingRedScaleStackTechnique());
         // Register more techniques here
     }
 

@@ -2,6 +2,7 @@ package com.mcgamer.mcjjkp.event;
 
 import com.mcgamer.mcjjkp.Config;
 import com.mcgamer.mcjjkp.JJKMod;
+import com.mcgamer.mcjjkp.attachments.ModDataAttachments;
 import com.mcgamer.mcjjkp.command.TechniquesCommand;
 import com.mcgamer.mcjjkp.command.TestCommand;
 import com.mcgamer.mcjjkp.components.ModDataComponents;
@@ -38,10 +39,10 @@ public class ModEvents {
         Player player = event.getEntity();
         if (event.getItemStack().is(Items.ARROW) && !event.getLevel().isClientSide && player.getData(INNATE_TECHNIQUE)
                 .equals("blood_manipulation") && !player.getCooldowns().isOnCooldown(event.getItemStack().getItem())) {
-            player.getCooldowns().addCooldown(event.getItemStack().getItem(), 10);
+            player.getCooldowns().addCooldown(event.getItemStack().getItem(), 15);
 
             player.hurt(new DamageSource(player.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
-                    .getHolderOrThrow(HAEMORRHAGE)), 2f);
+                    .getHolderOrThrow(HAEMORRHAGE)), 1f);
             event.getItemStack().consume(1, player);
 
             ItemStack bloodTippedArrow = ModItems.BLOOD_TIPPED_ARROW_ITEM.toStack();
@@ -54,12 +55,10 @@ public class ModEvents {
     @SubscribeEvent
     public static void tick(PlayerTickEvent.Pre event) {
         Player player = event.getEntity();
-
         player.setData(LAST_ARROW_PRICK, player.getData(LAST_ARROW_PRICK) + 1);
 
-        if(player.getData(CURSED_ENERGY_AVAILABLE) < player.getData(CURSED_ENERGY_MAX) && player.tickCount % 60 == 0) {
-            player.setData(CURSED_ENERGY_AVAILABLE, player.getData(CURSED_ENERGY_AVAILABLE) + 1);
-
+        if(player.getData(CURSED_ENERGY_AVAILABLE) < player.getData(CURSED_ENERGY_MAX) && player.tickCount % 20 == 0) {
+            player.setData(CURSED_ENERGY_AVAILABLE, player.getData(CURSED_ENERGY_AVAILABLE) + 2);
             /** Syncs Cursed Energy */
             if(!player.level().isClientSide) {
                 if(player.getData(CURSED_ENERGY_AVAILABLE) < 0) {
@@ -74,14 +73,15 @@ public class ModEvents {
 
         if (player.hasData(BLOOD_DRAWN)) {
             if(player.getData(BLOOD_DRAWN) <= 5 && player.getData(BLOOD_DRAWN) > 0) {
-                player.addEffect(new MobEffectInstance(ModEffects.HAEMORRHAGE_EFFECT, 2000, 0, false,
-                        true), player);
-            } else {
-                player.addEffect(new MobEffectInstance(ModEffects.HAEMORRHAGE_EFFECT, 2000, 1, false,
-                        true), player);
+                player.addEffect(new MobEffectInstance(ModEffects.BLEEDING_EFFECT, 600, 0, false,
+                        true, true), player);
+            } else if(player.getData(BLOOD_DRAWN) > 5){
+                player.addEffect(new MobEffectInstance(ModEffects.BLEEDING_EFFECT, 600, 1, false,
+                        true, true), player);
             }
         }
-        if(player.getData(BLOOD_DRAWN) > 0 && player.getData(LAST_ARROW_PRICK) >= 2000) {
+
+        if(player.getData(BLOOD_DRAWN) > 0 && player.getData(LAST_ARROW_PRICK) >= 1800) {
             player.setData(BLOOD_DRAWN, player.getData(BLOOD_DRAWN) - 1);
             player.setData(LAST_ARROW_PRICK, 0);
         }
@@ -101,6 +101,7 @@ public class ModEvents {
                     ModMessages.sendToPlayerClient(new S2CToggleTechnique(technique.isActive(), technique.getName()), player);
                 }
             }
+            ModDataAttachments.setCursedEnergy(player, 0);
         }
     }
     @SubscribeEvent

@@ -4,22 +4,37 @@ import com.mcgamer.mcjjkp.attachments.ModDataAttachments;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class ExtensionTechnique {
     private final String parentTechnique;
     private final String name;
     private final int energyCost;
     private final int cooldown;
+    private final boolean isMaxOutput;
     private final boolean isToggleable;
+    private final int energyCostPerSecond;
+
 
     private long lastUsed = 0;
     private boolean isActive = false;
 
-    public ExtensionTechnique(String innateTechnique, String name, int energyCost, int cooldown, boolean isToggleable) {
+    public ExtensionTechnique(String innateTechnique, String name, int energyCost, int cooldown, boolean isMaxOutput,
+                              boolean isToggleable, int energyCostPerSecond) {
         this.parentTechnique = innateTechnique;
         this.name = name;
         this.energyCost = energyCost;
         this.cooldown = cooldown;
+        this.isMaxOutput = isMaxOutput;
         this.isToggleable = isToggleable;
+        this.energyCostPerSecond = isToggleable ? energyCostPerSecond : 0;
+    }
+
+    Map<String, String> innateTechniqueColor = new HashMap<String, String>();
+
+    {
+        innateTechniqueColor.put("blood_manipulation", "§4");
     }
 
     public abstract void activate(Player player);
@@ -73,8 +88,14 @@ public abstract class ExtensionTechnique {
     public String getName() {
         return name;
     }
+    public String getParentTechnique() {
+        return parentTechnique;
+    }
     public int getEnergyCost() {
         return energyCost;
+    }
+    public int getEnergyCostPerSecond() {
+        return energyCostPerSecond;
     }
     public int getCooldown() {
         return cooldown;
@@ -85,7 +106,10 @@ public abstract class ExtensionTechnique {
     public boolean isActive() {
         return isActive;
     }
-    public String getParentTechnique() {
-        return parentTechnique;
+    public boolean isMaxOutput() {
+        return isMaxOutput;
+    }
+    public String getInnateTechniqueColor() {
+        return innateTechniqueColor.getOrDefault(parentTechnique, "§f");
     }
 }
