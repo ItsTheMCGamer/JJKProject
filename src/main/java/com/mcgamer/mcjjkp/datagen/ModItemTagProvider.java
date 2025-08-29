@@ -23,6 +23,7 @@ public class ModItemTagProvider extends ItemTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         this.tag(ItemTags.ARROWS).add(ModItems.BLOOD_TIPPED_ARROW_ITEM.get());
+        this.tag(ModTags.Items.IS_BLOOD).add(ModItems.BLOOD_TIPPED_ARROW_ITEM.get());
 
     }
 }
