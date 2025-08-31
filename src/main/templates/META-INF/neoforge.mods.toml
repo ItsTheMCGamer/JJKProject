@@ -19,7 +19,17 @@ description='''${mod_description}'''
 [[mixins]]
 config="mcjjkp.mixins.json"
 
-#file="META-INF/accesstransformer.cfg"
+[[accessTransformers]]
+file="accesstransformer_main.cfg"
+
+[[accessTransformers]]
+file="recipebuilders.cfg"
+
+[[accessTransformers]]
+file="blockproperties.cfg"
+
+[[accessTransformers]]
+file="renderstates.cfg"
 
 [[dependencies.mcjjkp]]
     modId="neoforge"

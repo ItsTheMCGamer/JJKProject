@@ -19,7 +19,12 @@ java {
 neoForge {
     version = project.property('neo_version')
 
-    accessTransformers = ['src/main/resources/META-INF/accesstransformer.cfg']
+    setAccessTransformers(
+            "src/main/resources/META-INF/accesstransformer.cfg",
+            "src/main/resources/META-INF/recipebuilders.cfg",
+            "src/main/resources/META-INF/blockproperties.cfg",
+            "src/main/resources/META-INF/renderstates.cfg"
+    )
 
     parchment {
         mappingsVersion = project.property('parchment_mappings_version')
