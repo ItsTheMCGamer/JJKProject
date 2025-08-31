@@ -7,6 +7,7 @@ import com.mcgamer.mcjjkp.command.TechniquesCommand;
 import com.mcgamer.mcjjkp.command.TestCommand;
 import com.mcgamer.mcjjkp.components.ModDataComponents;
 import com.mcgamer.mcjjkp.effect.ModEffects;
+import com.mcgamer.mcjjkp.gui.overlays.TechniqueItemOverlay;
 import com.mcgamer.mcjjkp.item.ModItems;
 import com.mcgamer.mcjjkp.networking.ModMessages;
 import com.mcgamer.mcjjkp.networking.packets.S2CSyncCursedEnergy;
@@ -72,10 +73,10 @@ public class ModEvents {
         }
 
         if (player.hasData(BLOOD_DRAWN)) {
-            if(player.getData(BLOOD_DRAWN) <= 5 && player.getData(BLOOD_DRAWN) > 0) {
+            if(player.getData(BLOOD_DRAWN) < 7 && player.getData(BLOOD_DRAWN) >= 4) {
                 player.addEffect(new MobEffectInstance(ModEffects.BLEEDING_EFFECT, 600, 0, false,
                         true, true), player);
-            } else if(player.getData(BLOOD_DRAWN) > 5){
+            } else if(player.getData(BLOOD_DRAWN) >= 7){
                 player.addEffect(new MobEffectInstance(ModEffects.BLEEDING_EFFECT, 600, 1, false,
                         true, true), player);
             }
@@ -84,6 +85,12 @@ public class ModEvents {
         if(player.getData(BLOOD_DRAWN) > 0 && player.getData(LAST_ARROW_PRICK) >= 1800) {
             player.setData(BLOOD_DRAWN, player.getData(BLOOD_DRAWN) - 1);
             player.setData(LAST_ARROW_PRICK, 0);
+        }
+
+        if(TechniqueItemOverlay.getCurrentTechnique() != null && player.tickCount % 20 == 0) {
+            var energyCostPerSecond = ExtensionTechniqueRegistry
+                    .getTechniqueByName(TechniqueItemOverlay.getCurrentTechnique()).get().getEnergyCostPerSecond();
+            ModDataAttachments.consumeCursedEnergy(player, energyCostPerSecond);
         }
     }
     @SubscribeEvent

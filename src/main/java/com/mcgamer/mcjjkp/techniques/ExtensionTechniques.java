@@ -2,7 +2,8 @@ package com.mcgamer.mcjjkp.techniques;
 
 public enum ExtensionTechniques {
     FLOWING_RED_SCALE("flowing_red_scale"),
-    FLOWING_RED_SCALE_STACK("flowing_red_scale_stack");
+    FLOWING_RED_SCALE_STACK("flowing_red_scale_stack"),
+    BLOOD_EDGE("blood_edge");
 
     private final String id;
 

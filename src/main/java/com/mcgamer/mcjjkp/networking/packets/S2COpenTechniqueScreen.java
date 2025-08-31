@@ -1,14 +1,12 @@
 package com.mcgamer.mcjjkp.networking.packets;
 
 import com.mcgamer.mcjjkp.JJKMod;
-import com.mcgamer.mcjjkp.screen.TechniquesScreen;
+import com.mcgamer.mcjjkp.gui.TechniquesScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 public class S2COpenTechniqueScreen extends AbstractPacket {

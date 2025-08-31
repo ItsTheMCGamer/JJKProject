@@ -1,7 +1,7 @@
 package com.mcgamer.mcjjkp.event;
 
 import com.mcgamer.mcjjkp.JJKMod;
-import com.mcgamer.mcjjkp.client.CursedEnergyHudOverlay;
+import com.mcgamer.mcjjkp.gui.overlays.CursedEnergyHudOverlay;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

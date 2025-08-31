@@ -1,4 +1,4 @@
-package com.mcgamer.mcjjkp.screen;
+package com.mcgamer.mcjjkp.gui;
 
 import com.mcgamer.mcjjkp.JJKMod;
 import net.minecraft.client.Minecraft;

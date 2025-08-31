@@ -17,7 +17,7 @@ public class ModTags {
     }
 
     public static class Items {
-        public static final TagKey<Item> ARROWS = createTag("arrows");
+        public static final TagKey<Item> IS_BLOOD = createTag("is_blood");
 
         private static TagKey<Item> createTag(String name) {
             return ItemTags.create(ResourceLocation.fromNamespaceAndPath(JJKMod.MOD_ID, name));

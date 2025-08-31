@@ -31,7 +31,7 @@ public class BloodTippedArrowItem extends ArrowItem {
     @Override
     public AbstractArrow createArrow(Level level, ItemStack ammo, LivingEntity shooter,
                                      @Nullable ItemStack weapon) {
-        if(Objects.equals(ammo.get(ModDataComponents.ARROW_OWNER), shooter.getName().toString())) {
+        if (Objects.equals(ammo.get(ModDataComponents.ARROW_OWNER), shooter.getName().toString())) {
             return new BloodTippedArrowEntity(level, shooter, ammo.copyWithCount(1), weapon);
         } else {
             return new Arrow(level, shooter, ammo.copyWithCount(1), weapon);
@@ -41,7 +41,7 @@ public class BloodTippedArrowItem extends ArrowItem {
     @Override
     public Projectile asProjectile(Level level, Position pos, ItemStack stack, Direction direction) {
         BloodTippedArrowEntity bloodTippedArrow = new BloodTippedArrowEntity(level, pos.x(), pos.y(),
-                pos.z(), stack.copyWithCount(1), (ItemStack)null);
+                pos.z(), stack.copyWithCount(1), (ItemStack) null);
         bloodTippedArrow.pickup = AbstractArrow.Pickup.ALLOWED;
         return bloodTippedArrow;
     }
@@ -52,14 +52,21 @@ public class BloodTippedArrowItem extends ArrowItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if(stack.get(ModDataComponents.ARROW_OWNER) != null) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents,
+                                TooltipFlag tooltipFlag) {
+        if (stack.get(ModDataComponents.ARROW_OWNER) != null) {
             tooltipComponents.add(Component.literal(stack.get(ModDataComponents.ARROW_OWNER)
                     .replaceFirst("^literal\\{", "").replaceFirst("}", "")
-            + "'s Blood"));
+                    + "'s Blood"));
         }
 
 
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+
+        return super.use(level, player, usedHand);
     }
 }

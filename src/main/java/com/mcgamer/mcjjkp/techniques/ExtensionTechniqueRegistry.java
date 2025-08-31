@@ -1,5 +1,6 @@
 package com.mcgamer.mcjjkp.techniques;
 
+import com.mcgamer.mcjjkp.techniques.blood_manipulation.BloodEdgeTechnique;
 import com.mcgamer.mcjjkp.techniques.blood_manipulation.FlowingRedScaleStackTechnique;
 import com.mcgamer.mcjjkp.techniques.blood_manipulation.FlowingRedScaleTechnique;
 
@@ -14,7 +15,7 @@ public class ExtensionTechniqueRegistry {
     public static void init() {
         register(ExtensionTechniques.FLOWING_RED_SCALE, new FlowingRedScaleTechnique());
         register(ExtensionTechniques.FLOWING_RED_SCALE_STACK, new FlowingRedScaleStackTechnique());
-        // Register more techniques here
+        register(ExtensionTechniques.BLOOD_EDGE, new BloodEdgeTechnique());
     }
 
     private static void register(ExtensionTechniques type, ExtensionTechnique technique) {
@@ -26,7 +27,12 @@ public class ExtensionTechniqueRegistry {
     }
 
     public static Optional<ExtensionTechnique> getTechniqueByName(String name) {
-        return Optional.ofNullable(TECHNIQUES.get(name));
+        try {
+            ExtensionTechniques techniqueType = ExtensionTechniques.valueOf(name.toUpperCase());
+            return Optional.ofNullable(TECHNIQUES.get(techniqueType));
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 
     public static Collection<ExtensionTechnique> getAllTechniques() {

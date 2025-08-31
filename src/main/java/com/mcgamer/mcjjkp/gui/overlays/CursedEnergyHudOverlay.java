@@ -1,4 +1,4 @@
-package com.mcgamer.mcjjkp.client;
+package com.mcgamer.mcjjkp.gui.overlays;
 
 import com.mcgamer.mcjjkp.attachments.ModDataAttachments;
 import net.minecraft.client.DeltaTracker;
