@@ -1,135 +1,137 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '1.0.21'
+    id 'net.neoforged.moddev' version '2.0.30-beta'
 }
 
-tasks.named('wrapper', Wrapper).configure {
-    distributionType = Wrapper.DistributionType.BIN
-}
-
-version = mod_version
-group = mod_group_id
-
-repositories {
-    mavenLocal()
-    maven {
-        name 'Curios maven'
-        url = "https://maven.theillusivec4.top/"
-    }
-    maven { url = 'https://maven.blamejared.com/' }
-}
-
+version = "${project.property('minecraft_version')}-${project.property('mod_version')}"
 base {
-    archivesName = mod_id
+    archivesName = project.property('mod_id')
 }
+group = project.property('mod_group_id')
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 neoForge {
-    version = project.neo_version
+    version = project.property('neo_version')
+
+    accessTransformers = ['src/main/resources/META-INF/accesstransformer.cfg']
 
     parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
+        mappingsVersion = project.property('parchment_mappings_version')
+        minecraftVersion = project.property('parchment_minecraft_version')
     }
 
     runs {
         client {
             client()
-
-            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.property('mod_id')
         }
 
         server {
             server()
             programArgument '--nogui'
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        }
-
-        gameTestServer {
-            type = "gameTestServer"
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.property('mod_id')
         }
 
         data {
             data()
-
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+            programArguments.addAll([
+                    '--mod', project.property('mod_id'),
+                    '--all',
+                    '--output', file('src/generated/resources/').absolutePath,
+                    '--existing', file('src/main/resources/').absolutePath
+            ])
         }
 
         configureEach {
-            systemProperty 'forge.logging.markers', 'REGISTRIES'
-
+            jvmArgument '-Dmixin.debug=true'
+            jvmArgument '-Xmx4G'
+            systemProperty 'neoforge.logging.markers', 'REGISTRIES'
             logLevel = org.slf4j.event.Level.DEBUG
         }
     }
 
     mods {
-        "${mod_id}" {
-            sourceSet(sourceSets.main)
+        "${project.property('mod_id')}" {
+            sourceSet sourceSets.main
         }
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+sourceSets {
+    main {
+        resources.srcDir("src/generated/resources")
+    }
+}
 
-configurations {
-    runtimeClasspath.extendsFrom localRuntime
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        name = 'NeoForged'
+        url = 'https://maven.neoforged.net/releases'
+    }
+    maven {
+        name = 'Curios maven'
+        url = 'https://maven.theillusivec4.top/'
+    }
+    maven {
+        name = 'OctoStudios'
+        url = 'https://maven.octo-studios.com/releases'
+    }
+    maven {
+        name = 'ModMaven'
+        url = 'https://modmaven.dev'
+    }
 }
 
 dependencies {
-    compileOnlyApi(("top.theillusivec4.curios:curios-neoforge:${property("curios_version")}"))
-    runtimeOnly(("top.theillusivec4.curios:curios-neoforge:${property("curios_version")}"))
+    // Curios
+    compileOnlyApi "top.theillusivec4.curios:curios-neoforge:${project.property('curios_version')}"
+    runtimeOnly "top.theillusivec4.curios:curios-neoforge:${project.property('curios_version')}"
 
-    compileOnlyApi(("team.lodestar.lodestone:lodestone:${property("minecraft_version")}-${property("lodestone_version")}"))
-    runtimeOnly(("team.lodestar.lodestone:lodestone:${property("minecraft_version")}-${property("lodestone_version")}"))
+    // Lodestone - Use the exact same format as the working mod
+    compileOnlyApi "team.lodestar.lodestone:lodestone:${project.property('minecraft_version')}-${project.property('lodestone_version')}"
+    runtimeOnly "team.lodestar.lodestone:lodestone:${project.property('minecraft_version')}-${project.property('lodestone_version')}"
 }
 
-var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
-    var replaceProperties = [
-            minecraft_version      : minecraft_version,
-            minecraft_version_range: minecraft_version_range,
-            neo_version            : neo_version,
-            neo_version_range      : neo_version_range,
-            loader_version_range   : loader_version_range,
-            mod_id                 : mod_id,
-            mod_name               : mod_name,
-            mod_license            : mod_license,
-            mod_version            : mod_version,
-            mod_authors            : mod_authors,
-            mod_description        : mod_description
+task generateModMetadata(type: ProcessResources) {
+    def replaceProperties = [
+            'minecraft_version': project.findProperty('minecraft_version'),
+            'minecraft_version_range': project.findProperty('minecraft_version_range'),
+            'neo_version': project.findProperty('neo_version'),
+            'neo_version_range': project.findProperty('neo_version_range'),
+            'loader_version_range': project.findProperty('loader_version_range'),
+            'mod_id': project.findProperty('mod_id'),
+            'mod_name': project.findProperty('mod_name'),
+            'mod_license': project.findProperty('mod_license'),
+            'mod_version': project.findProperty('mod_version'),
+            'mod_authors': project.findProperty('mod_authors'),
+            'mod_description': project.findProperty('mod_description'),
+            'lodestone_version_range': project.findProperty('lodestone_version_range')
     ]
-    inputs.properties replaceProperties
-    expand replaceProperties
-    from "src/main/templates"
-    into "build/generated/sources/modMetadata"
-}
+    inputs.properties(replaceProperties)
+    expand(replaceProperties)
 
+    filesMatching('**/*.java') {
+        exclude()
+    }
+
+    from('src/main/templates')
+    into('build/generated/sources/modMetadata')
+}
 sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
 
-publishing {
-    publications {
-        register('mavenJava', MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/repo"
-        }
-    }
+java {
+    withSourcesJar()
 }
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-}
-
-idea {
-    module {
-        downloadSources = true
-        downloadJavadoc = true
-    }
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
