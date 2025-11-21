@@ -14,8 +14,8 @@ public class ModDataComponents {
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS_TYPES =
             DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, JJKMod.MOD_ID);
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> ARROW_OWNER =
-            register("arrow_owner", builder -> builder.persistent(ExtraCodecs.PLAYER_NAME));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> OWNER =
+            register("owner", builder -> builder.persistent(ExtraCodecs.PLAYER_NAME));
 
 
 

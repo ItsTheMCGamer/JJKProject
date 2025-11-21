@@ -1,4 +1,4 @@
-package com.mcgamer.mcjjkp.event;
+package com.mcgamer.mcjjkp.events;
 
 import com.mcgamer.mcjjkp.JJKMod;
 import com.mcgamer.mcjjkp.effect.ModEffects;

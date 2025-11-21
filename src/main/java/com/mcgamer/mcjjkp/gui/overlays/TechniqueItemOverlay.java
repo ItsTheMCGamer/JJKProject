@@ -35,6 +35,7 @@ public class TechniqueItemOverlay implements LayeredDraw.Layer {
 
     static {
         TECHNIQUE_ITEMS.put("Blood Edge", new ItemStack(ModItems.BLOOD_EDGE_ITEM.get()));
+        TECHNIQUE_ITEMS.put("Shadow Blade", new ItemStack(ModItems.SHADOW_BLADE_ITEM.get()));
     }
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {

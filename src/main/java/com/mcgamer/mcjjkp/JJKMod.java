@@ -7,12 +7,13 @@ import com.mcgamer.mcjjkp.effect.ModEffects;
 import com.mcgamer.mcjjkp.entity.ModEntities;
 import com.mcgamer.mcjjkp.entity.client.BloodTippedArrowRenderer;
 import com.mcgamer.mcjjkp.item.ModItems;
+import com.mcgamer.mcjjkp.particles.ModParticles;
 import com.mcgamer.mcjjkp.techniques.ExtensionTechniqueRegistry;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -30,14 +31,11 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
-// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(JJKMod.MOD_ID)
 public class JJKMod {
     public static final String MOD_ID = "mcjjkp";
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    // The constructor for the mod class is the first code that is run when your mod is loaded.
-    // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public JJKMod(IEventBus modEventBus, ModContainer modContainer) {
 
         modEventBus.addListener(this::commonSetup);
@@ -52,11 +50,12 @@ public class JJKMod {
         ModDataAttachments.register(modEventBus);
         ModDataComponents.register(modEventBus);
 
+        ModParticles.PARTICLES.register(modEventBus);
+
         ModEffects.register(modEventBus);
 
-        // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
-        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
+
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
@@ -67,7 +66,10 @@ public class JJKMod {
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if(event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
-
+            event.accept(ModItems.BLOOD_PACK_ITEM.get());
+            event.accept(ModItems.EMPTY_BLOOD_PACK_ITEM.get());
+            event.accept(ModItems.BLOOD_EDGE_ITEM.get());
+            event.accept(ModItems.SHADOW_BLADE_ITEM.get());
         }
 
     }

@@ -1,4 +1,4 @@
-package com.mcgamer.mcjjkp.event;
+package com.mcgamer.mcjjkp.events;
 
 import com.mcgamer.mcjjkp.Config;
 import com.mcgamer.mcjjkp.JJKMod;
@@ -47,7 +47,7 @@ public class ModEvents {
             event.getItemStack().consume(1, player);
 
             ItemStack bloodTippedArrow = ModItems.BLOOD_TIPPED_ARROW_ITEM.toStack();
-            bloodTippedArrow.set(ModDataComponents.ARROW_OWNER, player.getName().toString());
+            bloodTippedArrow.set(ModDataComponents.OWNER, player.getName().toString());
             player.addItem(bloodTippedArrow);
 
             player.setData(BLOOD_DRAWN, player.getData(BLOOD_DRAWN) + 1);

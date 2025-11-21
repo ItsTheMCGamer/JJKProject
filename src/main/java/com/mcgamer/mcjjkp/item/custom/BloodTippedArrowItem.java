@@ -31,7 +31,7 @@ public class BloodTippedArrowItem extends ArrowItem {
     @Override
     public AbstractArrow createArrow(Level level, ItemStack ammo, LivingEntity shooter,
                                      @Nullable ItemStack weapon) {
-        if (Objects.equals(ammo.get(ModDataComponents.ARROW_OWNER), shooter.getName().toString())) {
+        if (Objects.equals(ammo.get(ModDataComponents.OWNER), shooter.getName().toString())) {
             return new BloodTippedArrowEntity(level, shooter, ammo.copyWithCount(1), weapon);
         } else {
             return new Arrow(level, shooter, ammo.copyWithCount(1), weapon);
@@ -54,8 +54,8 @@ public class BloodTippedArrowItem extends ArrowItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents,
                                 TooltipFlag tooltipFlag) {
-        if (stack.get(ModDataComponents.ARROW_OWNER) != null) {
-            tooltipComponents.add(Component.literal(stack.get(ModDataComponents.ARROW_OWNER)
+        if (stack.get(ModDataComponents.OWNER) != null) {
+            tooltipComponents.add(Component.literal(stack.get(ModDataComponents.OWNER)
                     .replaceFirst("^literal\\{", "").replaceFirst("}", "")
                     + "'s Blood"));
         }

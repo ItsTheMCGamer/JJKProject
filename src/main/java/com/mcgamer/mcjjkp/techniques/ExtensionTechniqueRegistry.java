@@ -3,6 +3,7 @@ package com.mcgamer.mcjjkp.techniques;
 import com.mcgamer.mcjjkp.techniques.blood_manipulation.BloodEdgeTechnique;
 import com.mcgamer.mcjjkp.techniques.blood_manipulation.FlowingRedScaleStackTechnique;
 import com.mcgamer.mcjjkp.techniques.blood_manipulation.FlowingRedScaleTechnique;
+import com.mcgamer.mcjjkp.techniques.ten_shadows.ShadowBladeTechnique;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,6 +17,8 @@ public class ExtensionTechniqueRegistry {
         register(ExtensionTechniques.FLOWING_RED_SCALE, new FlowingRedScaleTechnique());
         register(ExtensionTechniques.FLOWING_RED_SCALE_STACK, new FlowingRedScaleStackTechnique());
         register(ExtensionTechniques.BLOOD_EDGE, new BloodEdgeTechnique());
+
+        register(ExtensionTechniques.SHADOW_BLADE, new ShadowBladeTechnique());
     }
 
     private static void register(ExtensionTechniques type, ExtensionTechnique technique) {

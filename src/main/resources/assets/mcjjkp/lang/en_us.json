@@ -3,8 +3,12 @@
 
   "block.mcjjkp.model_block": "Example Block",
 
-  "item.mcjjkp.blood_tipped_arrow_item": "Blood-Tipped Arrow",
-  "item.mcjjkp.blood_edge_item": "Blood Edge",
+  "item.mcjjkp.blood_tipped_arrow": "Blood-Tipped Arrow",
+  "item.mcjjkp.blood_edge": "Blood Edge",
+  "item.mcjjkp.empty_blood_pack": "Empty Blood Pack",
+  "item.mcjjkp.blood_pack": "Blood Pack",
+
+  "item.mcjjkp.shadow_blade": "Shadow Blade",
 
   "effect.mcjjkp.flowing_red_scale": "Flowing Red Scale",
   "effect.mcjjkp.flowing_red_scale_stack": "Flowing Red Scale: Stack",
